@@ -55,8 +55,20 @@ struct RingView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.bgPrimary)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("返回")
+                    }
+                    .foregroundColor(.textSecondary)
+                }
+            }
             ToolbarItem(placement: .principal) {
                 Text("\(yearFormatted) 年轮")
                     .font(.system(size: 18, weight: .bold))
