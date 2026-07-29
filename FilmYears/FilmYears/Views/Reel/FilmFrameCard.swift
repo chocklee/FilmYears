@@ -16,7 +16,7 @@ struct FilmFrameCard: View {
     var body: some View {
         HStack(spacing: 0) {
             // Left sprocket holes
-            SprocketHoles(height: 343, glowIndex: leftGlowIndex)
+            SprocketHoles(height: 341, glowIndex: leftGlowIndex)
 
             // Frame body
             VStack(spacing: 0) {
@@ -25,7 +25,7 @@ struct FilmFrameCard: View {
                     if frame.isFilled, let path = frame.photoPath {
                         FramePhoto(path: path)
                             .aspectRatio(contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: 272)
+                            .frame(maxWidth: .infinity, maxHeight: 284)
                             .clipped()
                     } else {
                         ZStack {
@@ -40,11 +40,9 @@ struct FilmFrameCard: View {
                             }
                             .background(Color.clear)
                         }
+                        .frame(height: 284)
                     }
-
-                    // Border overlay
                 }
-                .background(Color(hex: "#131313").opacity(0.3))
 
                 // Bottom info bar (film edge marking style)
                 HStack {
@@ -63,6 +61,7 @@ struct FilmFrameCard: View {
                 .padding(.horizontal, 16)
                 .background(Color.bgCard)
             }
+            .frame(height: 341)
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
                     .stroke(Color.white.opacity(0.05), style: StrokeStyle(
@@ -70,11 +69,12 @@ struct FilmFrameCard: View {
                         dash: frame.isFilled ? [] : [4]
                     ))
             )
+            
 
             // Right sprocket holes
-            SprocketHoles(height: 343, glowIndex: rightGlowIndex)
+            SprocketHoles(height: 341, glowIndex: rightGlowIndex)
         }
-        .frame(height: 343)
+        .frame(height: 341)
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
