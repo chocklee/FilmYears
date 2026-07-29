@@ -3,12 +3,12 @@ import PhotosUI
 
 struct FilmFrameCard: View {
     @Bindable var frame: FilmFrame
-    let onUpdate: (() -> Void)?
+    let onUpdate: ((FilmFrame) -> Void)?
     @State private var showEditor = false
     @State private var leftGlowIndex: Int?
     @State private var rightGlowIndex: Int?
 
-    init(frame: FilmFrame, onUpdate: (() -> Void)? = nil) {
+    init(frame: FilmFrame, onUpdate: ((FilmFrame) -> Void)? = nil) {
         self.frame = frame
         self.onUpdate = onUpdate
     }
@@ -81,7 +81,7 @@ struct FilmFrameCard: View {
             EditFrameSheet(frame: frame)
                 .presentationDetents([.height(600)])
                 .onDisappear {
-                    onUpdate?()
+                    onUpdate?(frame)
                 }
         }
         .onAppear {
