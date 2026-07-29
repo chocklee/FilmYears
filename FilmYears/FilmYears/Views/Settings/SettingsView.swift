@@ -4,7 +4,6 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
     @Query private var settings: [AppSettings]
-    @AppStorage("isDarkMode") private var isDarkMode = false
     @State private var showClearConfirm = false
     @State private var showClearSuccess = false
 
@@ -24,11 +23,6 @@ struct SettingsView: View {
                         get: { setting.isCloudSyncEnabled },
                         set: { setting.isCloudSyncEnabled = $0 }
                     ))
-                }
-
-                // MARK: Appearance
-                Section("外观") {
-                    Toggle("深色模式", isOn: $isDarkMode)
                 }
 
                 // MARK: Purchase
