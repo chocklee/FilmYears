@@ -43,6 +43,7 @@ struct FilmFrameCard: View {
                         .frame(height: 284)
                     }
                 }
+                .background(Color(hex: "#131313").opacity(0.3))
 
                 // Bottom info bar (film edge marking style)
                 HStack {

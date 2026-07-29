@@ -24,17 +24,15 @@ struct SprocketHoles: View {
         }
         .frame(width: 32, height: height)
         .background {
-            if let idx = glowIndex {
-                let topPadding: CGFloat = (height - 260) / 2
-                let dotCenter: CGFloat = topPadding + 6 + CGFloat(idx) * 62
+            if glowIndex != nil {
                 RadialGradient(
                     colors: [
-                        Color.textPrimary.opacity(0.15),
+                        Color.textPrimary.opacity(0.12),
                         Color.bgPrimary.opacity(0),
                     ],
-                    center: UnitPoint(x: 0.5, y: dotCenter / height),
+                    center: .center,
                     startRadius: 0,
-                    endRadius: 80
+                    endRadius: 100
                 )
             } else {
                 Color.bgPrimary
