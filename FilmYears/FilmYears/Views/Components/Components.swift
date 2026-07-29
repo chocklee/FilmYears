@@ -1,23 +1,20 @@
 import SwiftUI
 
-// MARK: - Sprocket Holes (rectangular like real 35mm film)
+// MARK: - Sprocket Holes
 struct SprocketHoles: View {
     let highlighted: Bool
-    var accentOpacity: Double { highlighted ? 0.5 : 0.15 }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ForEach(0 ..< 8) { i in
-                RoundedRectangle(cornerRadius: 1)
-                    .fill(Color.accentColor.opacity(accentOpacity))
-                    .frame(width: 8, height: 5)
-                if i < 7 {
-                    Spacer()
-                }
+        VStack(spacing: 12) {
+            ForEach(0 ..< 5) { i in
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color(hex: "#C8963E").opacity(highlighted ? 0.4 : 0.2))
+                    .frame(width: 12, height: 12)
             }
         }
-        .padding(.vertical, 6)
-        .frame(width: 14)
+        .padding(.vertical, 12)
+        .frame(width: 32)
+        .background(Color.bgPrimary)
     }
 }
 

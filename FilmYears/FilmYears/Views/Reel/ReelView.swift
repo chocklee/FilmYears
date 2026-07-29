@@ -16,7 +16,7 @@ struct ReelView: View {
                     FilmFrameCard(frame: frame, onUpdate: {
                         refreshID = UUID()
                     })
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, Spacing.xl)
                 }
             }
             .padding(.vertical, Spacing.xl)
