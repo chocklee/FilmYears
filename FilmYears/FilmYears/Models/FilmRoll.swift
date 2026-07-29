@@ -26,6 +26,6 @@ extension FilmRoll {
     }
 
     var frameCountFormatted: String {
-        "\(filledCount.formatted(.number.grouping(.never)))/\(totalCount.formatted(.number.grouping(.never))) 帧已填充"
+        "\(filledCount.formatted(.number.grouping(.never)))/\(totalCount.formatted(.number.grouping(.never)))"
     }
 }

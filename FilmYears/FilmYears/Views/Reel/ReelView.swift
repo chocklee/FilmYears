@@ -29,7 +29,7 @@ struct ReelView: View {
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
-                    RingView(year: roll.year)
+                    RingView(year: roll.year, yearFormatted: roll.yearFormatted)
                 } label: {
                     Image(systemName: "circle.dotted")
                         .foregroundColor(.textSecondary)

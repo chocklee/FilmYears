@@ -63,7 +63,7 @@ private struct RollRowView: View {
                     .font(.system(size: 30, weight: .regular))
                     .foregroundColor(.textPrimary)
 
-                Text(roll.frameCountFormatted)
+                Text(roll.frameCountFormatted + " 帧已填充")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(Color(hex: "#6B6660"))
             }

@@ -3,13 +3,15 @@ import SwiftData
 
 struct RingView: View {
     let year: Int
+    let yearFormatted: String
     @Environment(\.dismiss) private var dismiss
     @State private var exportedImage: UIImage?
     @State private var showExportSuccess = false
     @Query private var rolls: [FilmRoll]
 
-    init(year: Int) {
+    init(year: Int, yearFormatted: String) {
         self.year = year
+        self.yearFormatted = yearFormatted
         let predicate = #Predicate<FilmRoll> { $0.year == year }
         _rolls = Query(filter: predicate)
     }
@@ -17,18 +19,17 @@ struct RingView: View {
     var body: some View {
         VStack(spacing: 24) {
             if let roll = rolls.first {
-                // Exportable ring snapshot
+                Spacer()
+
                 RingChart(frames: roll.frames) { _ in
-                    // Tap to go back to reel
                     dismiss()
                 }
                 .frame(width: 280, height: 280)
 
-                Text("\(roll.filledCount)/\(roll.totalCount) 天已填充")
+                Text("\(roll.frameCountFormatted) 天已填充")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                // Legend
                 HStack(spacing: 20) {
                     Label("已填充", systemImage: "circle.fill")
                         .foregroundColor(.accentColor)
@@ -38,7 +39,6 @@ struct RingView: View {
                         .font(.caption)
                 }
 
-                // Export button
                 Button {
                     exportRing(roll: roll)
                 } label: {
@@ -47,17 +47,20 @@ struct RingView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.accentColor)
 
-                Text("点击年轮色块跳转至对应日期")
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                Spacer()
             } else {
                 ContentUnavailableView("暂无数据", systemImage: "circle.dotted")
             }
         }
-        .padding()
-        .navigationTitle("\(year) 年轮")
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.bgPrimary)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("\(yearFormatted) 年轮")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.textPrimary)
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     if let roll = rolls.first { exportRing(roll: roll) }
