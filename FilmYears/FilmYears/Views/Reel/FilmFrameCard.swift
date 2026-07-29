@@ -26,7 +26,7 @@ struct FilmFrameCard: View {
 
                     if frame.isFilled, let path = frame.photoPath {
                         FramePhoto(path: path)
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(contentMode: .fit)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .clipped()
                     } else {
@@ -96,6 +96,13 @@ struct FilmFrameCard: View {
                         screenTimeScore: frame.screenTimeScore
                     )
                 }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(Color.white.opacity(0.05), style: StrokeStyle(
+                            lineWidth: 1,
+                            dash: frame.isFilled ? [] : [4]
+                        ))
+                )
 
                 // Bottom info bar (film edge marking style)
                 HStack {
@@ -120,8 +127,6 @@ struct FilmFrameCard: View {
             SprocketHoles(highlighted: frame.focusActive ?? false, height: 343)
         }
         .frame(height: 343)
-        .background(Color(.systemGray5))
-        .clipShape(RoundedRectangle(cornerRadius: 6))
         .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
