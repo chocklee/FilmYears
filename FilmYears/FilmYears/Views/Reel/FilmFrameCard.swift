@@ -15,6 +15,7 @@ struct FilmFrameCard: View {
                 ZStack {
                     if frame.isFilled, let path = frame.photoPath {
                         FramePhoto(path: path)
+                            .id(path)
                             .aspectRatio(contentMode: .fit)
                             .frame(maxWidth: .infinity, maxHeight: 284)
                             .clipped()
