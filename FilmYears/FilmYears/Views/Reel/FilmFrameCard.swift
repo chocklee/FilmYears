@@ -14,7 +14,7 @@ struct FilmFrameCard: View {
     var body: some View {
         HStack(spacing: 0) {
             // Left sprocket holes
-            SprocketHoles(highlighted: frame.focusActive ?? false)
+            SprocketHoles(highlighted: frame.focusActive ?? false, height: 343)
 
             // Frame body
             VStack(spacing: 0) {
@@ -117,8 +117,9 @@ struct FilmFrameCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 4))
 
             // Right sprocket holes
-            SprocketHoles(highlighted: frame.focusActive ?? false)
+            SprocketHoles(highlighted: frame.focusActive ?? false, height: 343)
         }
+        .frame(height: 343)
         .background(Color(.systemGray5))
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .shadow(color: .black.opacity(0.06), radius: 4, y: 2)

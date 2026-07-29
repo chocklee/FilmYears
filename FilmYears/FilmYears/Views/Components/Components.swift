@@ -3,17 +3,22 @@ import SwiftUI
 // MARK: - Sprocket Holes
 struct SprocketHoles: View {
     let highlighted: Bool
+    let height: CGFloat
+
+    init(highlighted: Bool = false, height: CGFloat = 343) {
+        self.highlighted = highlighted
+        self.height = height
+    }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 50) {
             ForEach(0 ..< 5) { i in
                 RoundedRectangle(cornerRadius: 6)
                     .fill(Color(hex: "#C8963E").opacity(highlighted ? 0.4 : 0.2))
                     .frame(width: 12, height: 12)
             }
         }
-        .padding(.vertical, 12)
-        .frame(width: 32)
+        .frame(width: 32, height: height)
         .background(Color.bgPrimary)
     }
 }
