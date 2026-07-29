@@ -63,8 +63,8 @@ private struct RollRowView: View {
                     .foregroundColor(Color(hex: "#F4BD61"))
 
                 Text("\(roll.filledCount)/\(roll.totalCount) 帧已填充")
-                    .font(AppFont.caption)
-                    .foregroundColor(.textSecondary)
+                    .font(.system(size: 11))
+                    .foregroundColor(Color(hex: "#6B6660"))
             }
 
             Spacer()
