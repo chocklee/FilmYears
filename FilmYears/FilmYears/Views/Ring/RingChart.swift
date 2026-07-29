@@ -12,7 +12,7 @@ struct RingChart: View {
             let radius = min(geo.size.width, geo.size.height) / 2 - 20
             let total = max(frames.count, 1)
             let segmentAngle = 2 * .pi / Double(total)
-            let gap: Double = 0.5
+            let gap = segmentAngle * 0.15
             let drawAngle = segmentAngle - gap
 
             ZStack {
