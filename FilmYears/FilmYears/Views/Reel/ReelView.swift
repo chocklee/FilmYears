@@ -10,28 +10,21 @@ struct ReelView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-                .background(Color.borderStandard)
-
-            // Frame list
-            ScrollView {
-                LazyVStack(spacing: 24) {
-                    ForEach(sortedFrames) { frame in
-                        FilmFrameCard(frame: frame, onUpdate: {
-                            refreshID = UUID()
-                        })
-                        .padding(.horizontal, Spacing.lg)
-                    }
+        ScrollView {
+            LazyVStack(spacing: 24) {
+                ForEach(sortedFrames) { frame in
+                    FilmFrameCard(frame: frame, onUpdate: {
+                        refreshID = UUID()
+                    })
+                    .padding(.horizontal, Spacing.lg)
                 }
-                .padding(.vertical, Spacing.lg)
             }
+            .padding(.vertical, Spacing.lg)
         }
         .id(refreshID)
         .background(Color.bgPrimary)
-        .toolbarBackground(Color.bgPrimary, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("\(roll.yearFormatted) 年")
