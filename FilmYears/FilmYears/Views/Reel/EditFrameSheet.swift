@@ -83,6 +83,7 @@ struct EditFrameSheet: View {
                     .font(.system(size: 15))
                     .foregroundColor(.textPrimary)
                     .padding(12)
+                    .frame(height: 100, alignment: .top)
                     .background(Color(hex: "#131313"))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(
