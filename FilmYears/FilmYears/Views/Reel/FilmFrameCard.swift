@@ -79,7 +79,7 @@ struct FilmFrameCard: View {
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
-                .presentationDetents([.height(420)])
+                .presentationDetents([.height(600)])
                 .onDisappear {
                     onUpdate?()
                 }
