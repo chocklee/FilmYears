@@ -15,13 +15,14 @@ struct MainTabView: View {
                     Label("胶卷列表", systemImage: "film.stack")
                 }
                 .tag(HomeTab.list)
+                .tint(.accentColor)
 
             RingOverviewView()
                 .tabItem {
                     Label("年轮总览", systemImage: "circle.dotted")
                 }
                 .tag(HomeTab.ring)
+                .tint(.accentColor)
         }
-        .tint(.accentColor)
     }
 }
