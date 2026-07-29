@@ -6,6 +6,11 @@ struct FilmFrameCard: View {
     @State private var showEditor = false
     @State private var leftGlowIndex: Int? = nil
     @State private var rightGlowIndex: Int? = nil
+    @State private var photoRefreshKey = UUID()
+
+    private var currentPath: String? {
+        frame.photoPath
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -13,7 +18,7 @@ struct FilmFrameCard: View {
 
             VStack(spacing: 0) {
                 ZStack {
-                    if frame.isFilled, let path = frame.photoPath {
+                    if frame.isFilled, let path = currentPath {
                         FramePhoto(path: path)
                             .id(path)
                             .aspectRatio(contentMode: .fit)
@@ -61,10 +66,14 @@ struct FilmFrameCard: View {
             SprocketHoles(height: 341, glowIndex: rightGlowIndex)
         }
         .frame(height: 341)
+        .id(photoRefreshKey)
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
                 .presentationDetents([.height(556)])
+                .onDisappear {
+                    photoRefreshKey = UUID()
+                }
         }
         .onChange(of: frame.isFilled) { _, filled in
             withAnimation(.easeInOut(duration: 0.4)) {
