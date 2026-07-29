@@ -136,7 +136,9 @@ struct EditFrameSheet: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
-        .background(Color.bgCardStrong)
+        .frame(maxHeight: .infinity, alignment: .top)
+        .background(Color.bgPrimary)
+        .ignoresSafeArea(.all, edges: .bottom)
         .task {
             note = frame.note ?? ""
             hasPhoto = frame.isFilled
