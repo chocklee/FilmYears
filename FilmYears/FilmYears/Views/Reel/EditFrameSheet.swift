@@ -10,10 +10,16 @@ struct EditFrameSheet: View {
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var photoData: Data?
     @State private var hasPhoto: Bool = false
+    @State private var originalNote: String = ""
+    @State private var originalHasPhoto: Bool = false
 
     private var previewImage: UIImage? {
         guard let data = photoData else { return nil }
         return UIImage(data: data)
+    }
+
+    private var hasChanges: Bool {
+        note != originalNote || hasPhoto != originalHasPhoto
     }
 
     var body: some View {
@@ -112,24 +118,29 @@ struct EditFrameSheet: View {
                 }) {
                     Text("删除照片")
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(Color(hex: "#E74C3C"))
+                        .foregroundColor(hasPhoto ? Color(hex: "#E74C3C") : Color(hex: "#E74C3C").opacity(0.3))
                         .frame(maxWidth: .infinity, minHeight: 52)
                         .background(Color(hex: "#131313"))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color(hex: "#E74C3C").opacity(0.3), lineWidth: 1)
+                                .stroke(
+                                    hasPhoto ? Color(hex: "#E74C3C").opacity(0.3) : Color(hex: "#E74C3C").opacity(0.1),
+                                    lineWidth: 1
+                                )
                         )
                 }
+                .disabled(!hasPhoto)
 
                 Button(action: saveFrame) {
                     Text("保存")
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.black)
+                        .foregroundColor(hasChanges ? .black : .black.opacity(0.3))
                         .frame(maxWidth: .infinity, minHeight: 52)
-                        .background(Color.accentGold)
+                        .background(hasChanges ? Color.accentGold : Color.accentGold.opacity(0.3))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
+                .disabled(!hasChanges)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
@@ -140,6 +151,8 @@ struct EditFrameSheet: View {
         .task {
             note = frame.note ?? ""
             hasPhoto = frame.isFilled
+            originalNote = note
+            originalHasPhoto = hasPhoto
             if hasPhoto, let path = frame.photoPath {
                 photoData = try? Data(contentsOf: PhotoManager.documentsDir
                     .deletingLastPathComponent()
