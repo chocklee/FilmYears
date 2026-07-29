@@ -5,7 +5,8 @@ struct FilmFrameCard: View {
     @Bindable var frame: FilmFrame
     let onUpdate: (() -> Void)?
     @State private var showEditor = false
-    @State private var glowIndex: Int?
+    @State private var leftGlowIndex: Int?
+    @State private var rightGlowIndex: Int?
 
     init(frame: FilmFrame, onUpdate: (() -> Void)? = nil) {
         self.frame = frame
@@ -15,7 +16,7 @@ struct FilmFrameCard: View {
     var body: some View {
         HStack(spacing: 0) {
             // Left sprocket holes
-            SprocketHoles(height: 343, glowIndex: glowIndex)
+            SprocketHoles(height: 343, glowIndex: leftGlowIndex)
 
             // Frame body
             VStack(spacing: 0) {
@@ -78,12 +79,9 @@ struct FilmFrameCard: View {
             )
 
             // Right sprocket holes
-            SprocketHoles(height: 343, glowIndex: glowIndex)
+            SprocketHoles(height: 343, glowIndex: rightGlowIndex)
         }
         .frame(height: 343)
-        .background(Color(.systemGray5))
-        .clipShape(RoundedRectangle(cornerRadius: 6))
-        .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
@@ -92,7 +90,14 @@ struct FilmFrameCard: View {
                 }
         }
         .onAppear {
-            glowIndex = frame.isFilled ? Int.random(in: 0...4) : nil
+            if frame.isFilled {
+                leftGlowIndex = Int.random(in: 0...4)
+                repeat { rightGlowIndex = Int.random(in: 0...4) }
+                    while rightGlowIndex == leftGlowIndex
+            } else {
+                leftGlowIndex = nil
+                rightGlowIndex = nil
+            }
         }
     }
 }
