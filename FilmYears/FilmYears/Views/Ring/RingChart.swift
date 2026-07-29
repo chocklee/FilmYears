@@ -15,13 +15,12 @@ struct RingChart: View {
             let gap = segmentAngle * 0.15
             let drawAngle = segmentAngle - gap
 
-            // Align Jan 1st at 12 o'clock
-            let firstDayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: frames.first?.date ?? .now) ?? 1
-            let rotationOffset = Double(firstDayOfYear - 1) * segmentAngle
-
             ZStack {
                 ForEach(Array(frames.enumerated()), id: \.offset) { index, frame in
-                    let start = Double(index) * segmentAngle - rotationOffset - .pi / 2
+                    // Align Jan 1st at 12 o'clock based on day of year
+                    let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: frame.date) ?? 1
+                    let start = Double(dayOfYear - 1) * segmentAngle - .pi / 2
+
                     RingSegmentView(
                         center: center,
                         radius: radius,
