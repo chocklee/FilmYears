@@ -20,6 +20,7 @@ struct SprocketHoles: View {
                         color: glowIndex == i ? Color.textPrimary.opacity(0.6) : .clear,
                         radius: glowIndex == i ? 6 : 0
                     )
+                    .animation(.easeInOut(duration: 0.4), value: glowIndex)
             }
         }
         .frame(width: 32, height: height)
@@ -38,6 +39,7 @@ struct SprocketHoles: View {
                 Color.bgPrimary
             }
         }
+        .animation(.easeInOut(duration: 0.4), value: glowIndex)
     }
 }
 

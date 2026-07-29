@@ -3,24 +3,15 @@ import PhotosUI
 
 struct FilmFrameCard: View {
     @Bindable var frame: FilmFrame
-    let onUpdate: ((FilmFrame) -> Void)?
     @State private var showEditor = false
-    @State private var leftGlowIndex: Int?
-    @State private var rightGlowIndex: Int?
-
-    init(frame: FilmFrame, onUpdate: ((FilmFrame) -> Void)? = nil) {
-        self.frame = frame
-        self.onUpdate = onUpdate
-    }
+    @State private var leftGlowIndex: Int? = nil
+    @State private var rightGlowIndex: Int? = nil
 
     var body: some View {
         HStack(spacing: 0) {
-            // Left sprocket holes
             SprocketHoles(height: 341, glowIndex: leftGlowIndex)
 
-            // Frame body
             VStack(spacing: 0) {
-                // Photo / empty area
                 ZStack {
                     if frame.isFilled, let path = frame.photoPath {
                         FramePhoto(path: path)
@@ -28,24 +19,19 @@ struct FilmFrameCard: View {
                             .frame(maxWidth: .infinity, maxHeight: 284)
                             .clipped()
                     } else {
-                        ZStack {
-                            // Inviting capture icon
-                            VStack(spacing: 16) {
-                                Image("CaptureIcon")
-                                    .resizable()
-                                    .frame(width: 40, height: 36)
-                                Text("等待曝光")
-                                    .foregroundColor(.textTertiary)
-                                    .font(.system(size: 11, weight: .medium))
-                            }
-                            .background(Color.clear)
+                        VStack(spacing: 16) {
+                            Image("CaptureIcon")
+                                .resizable()
+                                .frame(width: 40, height: 36)
+                            Text("等待曝光")
+                                .foregroundColor(.textTertiary)
+                                .font(.system(size: 11, weight: .medium))
                         }
                         .frame(height: 284)
                     }
                 }
                 .background(Color(hex: "#131313").opacity(0.3))
 
-                // Bottom info bar (film edge marking style)
                 HStack {
                     Text(frame.displayDate)
                         .font(.system(size: 11, weight: .semibold))
@@ -70,9 +56,7 @@ struct FilmFrameCard: View {
                         dash: frame.isFilled ? [] : [4]
                     ))
             )
-            
 
-            // Right sprocket holes
             SprocketHoles(height: 341, glowIndex: rightGlowIndex)
         }
         .frame(height: 341)
@@ -80,24 +64,29 @@ struct FilmFrameCard: View {
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
                 .presentationDetents([.height(600)])
-                .onDisappear {
-                    onUpdate?(frame)
+        }
+        .onChange(of: frame.isFilled) { _, filled in
+            withAnimation(.easeInOut(duration: 0.4)) {
+                if filled {
+                    leftGlowIndex = Int.random(in: 0...4)
+                    repeat { rightGlowIndex = Int.random(in: 0...4) }
+                        while rightGlowIndex == leftGlowIndex
+                } else {
+                    leftGlowIndex = nil
+                    rightGlowIndex = nil
                 }
+            }
         }
         .onAppear {
             if frame.isFilled {
                 leftGlowIndex = Int.random(in: 0...4)
                 repeat { rightGlowIndex = Int.random(in: 0...4) }
                     while rightGlowIndex == leftGlowIndex
-            } else {
-                leftGlowIndex = nil
-                rightGlowIndex = nil
             }
         }
     }
 }
 
-// MARK: - Image loader from local path
 private struct FramePhoto: View {
     let path: String
 

@@ -9,21 +9,14 @@ struct ReelView: View {
     }
 
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: 32) {
-                    ForEach(sortedFrames) { frame in
-                        FilmFrameCard(frame: frame, onUpdate: { edited in
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                proxy.scrollTo(edited.id, anchor: .center)
-                            }
-                        })
+        ScrollView {
+            LazyVStack(spacing: 32) {
+                ForEach(sortedFrames) { frame in
+                    FilmFrameCard(frame: frame)
                         .padding(.horizontal, Spacing.xl)
-                        .id(frame.id)
-                    }
                 }
-                .padding(.vertical, Spacing.xl)
             }
+            .padding(.vertical, Spacing.xl)
         }
         .background(Color.bgPrimary)
         .navigationBarTitleDisplayMode(.inline)
