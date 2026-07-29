@@ -3,7 +3,7 @@ import SwiftData
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var context
-    @State private var selectedYear = Calendar.current.component(.year, from: .now) - 29 // ~1995
+    @State private var selectedYear = Calendar.current.component(.year, from: .now) - 29
     @State private var selectedMonth = 6
     @State private var selectedDay = 15
     @State private var isInitializing = false
@@ -39,38 +39,38 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer()
 
                 // Logo area
-                VStack(spacing: 12) {
+                VStack(spacing: Spacing.md) {
                     Text("🎞️")
                         .font(.system(size: 72))
 
                     Text("FilmYears")
-                        .font(.system(size: 36, weight: .heavy))
-                        .foregroundColor(Color(red: 0.78, green: 0.59, blue: 0.24))
+                        .font(AppFont.display)
+                        .foregroundColor(.accentGold)
 
                     Text("每一年是一卷胶卷，每一天是一张胶片帧")
-                        .font(.system(size: 15))
-                        .foregroundColor(Color.white.opacity(0.6))
+                        .font(AppFont.body)
+                        .foregroundColor(.textSecondary)
                         .multilineTextAlignment(.center)
 
                     Text("Each year is a roll of film, every day one frame.")
                         .font(.system(size: 12).italic())
-                        .foregroundColor(Color.white.opacity(0.35))
+                        .foregroundColor(.textTertiary)
                 }
-                .padding(.bottom, 48)
+                .padding(.bottom, Spacing.huge)
 
                 // Date picker section
-                VStack(spacing: 16) {
+                VStack(spacing: Spacing.lg) {
                     Text("你的出生日期是？")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.white)
+                        .font(AppFont.body.weight(.medium))
+                        .foregroundColor(.textPrimary)
 
-                    HStack(spacing: 12) {
+                    HStack(spacing: Spacing.md) {
                         PickerField(label: "年", value: $selectedYear, range: years, width: 100)
                         PickerField(label: "月", value: $selectedMonth, range: months, width: 80)
                         PickerField(label: "日", value: $selectedDay, range: days, width: 80)
@@ -89,12 +89,12 @@ struct OnboardingView: View {
                         }
                     }
                 }
-                .padding(.bottom, 48)
+                .padding(.bottom, Spacing.huge)
 
                 // Start button
-                VStack(spacing: 12) {
+                VStack(spacing: Spacing.md) {
                     Button(action: initializeApp) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: Spacing.sm) {
                             if isInitializing {
                                 ProgressView()
                                     .progressViewStyle(.circular)
@@ -104,27 +104,27 @@ struct OnboardingView: View {
                                 .font(.system(size: 17, weight: .semibold))
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, Spacing.lg)
                         .background(
                             isInitializing
                                 ? Color.white.opacity(0.15)
-                                : Color(red: 0.78, green: 0.59, blue: 0.24)
+                                : Color.accentGold
                         )
                         .foregroundColor(
-                            isInitializing ? .white.opacity(0.3) : .black
+                            isInitializing ? .textSecondary : .black
                         )
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
                     }
                     .disabled(isInitializing)
 
                     Text("只回望你已经活过的时光 · 不渲染未来")
-                        .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.35))
+                        .font(AppFont.small)
+                        .foregroundColor(.textTertiary)
                 }
 
                 Spacer()
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, Spacing.xxl)
         }
         .alert("初始化失败", isPresented: $showError) {
             Button("重试") { initializeApp() }
@@ -165,24 +165,24 @@ private struct PickerField: View {
     let width: CGFloat
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: Spacing.xs) {
             Text(label)
-                .font(.system(size: 11, weight: .medium))
-                .foregroundColor(.white.opacity(0.5))
+                .font(AppFont.small.weight(.medium))
+                .foregroundColor(.textTertiary)
 
             ZStack {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: Radius.md)
                     .fill(Color.white.opacity(0.08))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color(red: 0.78, green: 0.59, blue: 0.24).opacity(0.3), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: Radius.md)
+                            .stroke(Color.accentGold.opacity(0.3), lineWidth: 1)
                     )
 
                 Picker("", selection: $value) {
                     ForEach(range, id: \.self) { num in
                         Text("\(num)")
                             .tag(num)
-                            .foregroundColor(.white)
+                            .foregroundColor(.textPrimary)
                     }
                 }
                 .pickerStyle(.wheel)
