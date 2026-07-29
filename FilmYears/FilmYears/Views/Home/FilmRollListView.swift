@@ -58,12 +58,12 @@ private struct RollRowView: View {
 
             // Year info
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(roll.year)")
-                    .font(.system(size: 30, weight: .bold))
+                Text(roll.year.formatted(.number.grouping(.never)))
+                    .font(.system(size: 30, weight: .regular))
                     .foregroundColor(Color(hex: "#F4BD61"))
 
-                Text("\(roll.filledCount)/\(roll.totalCount) 帧已填充")
-                    .font(.system(size: 11))
+                Text("\(roll.filledCount.formatted(.number.grouping(.never)))/\(roll.totalCount.formatted(.number.grouping(.never))) 帧已填充")
+                    .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(Color(hex: "#6B6660"))
             }
 
