@@ -24,6 +24,11 @@ struct RingView: View {
                     .foregroundColor(.textPrimary)
                     .padding(.top, 43)
 
+                Text("时间凝练成环，每一帧都是生活的见证。")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.textSecondary)
+                    .padding(.top, 4)
+
                 Spacer()
 
                 RingChart(frames: roll.frames) { _ in
