@@ -27,8 +27,8 @@ struct SprocketHoles: View {
             if glowIndex != nil {
                 RadialGradient(
                     colors: [
-                        Color.textPrimary.opacity(0.12),
-                        Color.bgPrimary.opacity(0),
+                        Color.accentGold.opacity(0.04),
+                        Color.bgPrimary.opacity(0.02),
                     ],
                     center: .center,
                     startRadius: 0,
