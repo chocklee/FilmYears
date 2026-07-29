@@ -32,7 +32,7 @@ struct EditFrameSheet: View {
                     Spacer()
                     Text("\(note.count)/80")
                         .font(.caption2)
-                        .foregroundColor(.tertiary)
+                        .foregroundStyle(.tertiary)
                 }
             }
 
@@ -91,7 +91,7 @@ private struct PhotoPickerView: View {
                             .foregroundColor(.secondary)
                         Text("点击添加照片")
                             .font(.caption)
-                            .foregroundColor(.tertiary)
+                            .foregroundStyle(.tertiary)
                     }
                 }
             }

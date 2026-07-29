@@ -55,7 +55,7 @@ struct OnboardingView: View {
 
             Text("只回望你已经活过的时光 · 不渲染未来")
                 .font(.caption2)
-                .foregroundColor(.tertiary)
+                .foregroundStyle(.tertiary)
                 .padding(.bottom, 32)
         }
         .padding()

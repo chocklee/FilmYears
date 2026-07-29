@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data: blob:; font-src data:; media-src data: blob:; connect-src 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="kun-component-prototype" content="1">
+  <title>Generating component prototype</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #34445d; background: #f7f9fc; }
+    body { display: grid; place-items: center; padding: 24px; }
+    [data-kun-component-root] { display: grid; justify-items: center; gap: 14px; text-align: center; }
+    .pulse { width: 34px; height: 34px; border-radius: 12px; background: #6c7cff; opacity: .72; animation: pulse 1.2s ease-in-out infinite; }
+    p { margin: 0; color: #70809a; font-size: 14px; }
+    @keyframes pulse { 50% { transform: scale(.82); opacity: .38; } }
+    @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+  </style>
+</head>
+<body>
+  <main data-kun-component-root aria-live="polite">
+    <span class="pulse" aria-hidden="true"></span>
+    <strong>Designing FilmYears 交互原型</strong>
+    <p>Kun is preparing a live component prototype.</p>
+  </main>
+</body>
+</html>

@@ -28,7 +28,8 @@ struct PersistenceController {
         } else {
             config = ModelConfiguration(
                 schema: schema,
-                cloudKitContainerIdentifier: "iCloud.com.yourcompany.filmyears"
+                groupContainer: .identifier("group.com.yourcompany.filmyears"),
+                cloudKitDatabase: .private("iCloud.com.yourcompany.filmyears")
             )
         }
 
