@@ -3,48 +3,55 @@ import Foundation
 
 @MainActor
 struct PersistenceController {
-    static let shared = PersistenceController()
-
-    static let preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        Task { @MainActor in
-            try? PreviewData.inject(into: result.container.mainContext)
-        }
-        return result
-    }()
-
     let container: ModelContainer
 
-    init(inMemory: Bool = false, cloudKitEnabled: Bool = false) {
+    static let shared: PersistenceController = {
+        let schema = Schema([FilmRoll.self, FilmFrame.self, AppSettings.self])
+        let instance = try? PersistenceController()
+        let container: ModelContainer
+        if let instance {
+            container = instance.container
+        } else {
+            let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            container = (try? ModelContainer(for: schema, configurations: [config]))!
+        }
+        return PersistenceController(container: container)
+    }()
+
+    static let preview: PersistenceController = {
+        let schema = Schema([FilmRoll.self, FilmFrame.self, AppSettings.self])
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        let instance = PersistenceController(container: try! ModelContainer(for: schema, configurations: [config]))
+        Task { @MainActor in
+            try? PreviewData.inject(into: instance.container.mainContext)
+        }
+        return instance
+    }()
+
+    private init(container: ModelContainer) {
+        self.container = container
+    }
+
+    init(inMemory: Bool = false, cloudKitEnabled: Bool = false) throws {
         let schema = Schema([
             FilmRoll.self,
             FilmFrame.self,
             AppSettings.self
         ])
 
-        // Try configurations in order until one works.
-        let configs: [ModelConfiguration]
+        let config: ModelConfiguration
         if inMemory {
-            configs = [ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)]
+            config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         } else if cloudKitEnabled {
-            configs = [
-                ModelConfiguration(schema: schema, cloudKitDatabase: .private("iCloud.com.chocklee.filmyears")),
-            ]
-        } else {
-            configs = [ModelConfiguration(
+            config = ModelConfiguration(
                 schema: schema,
-                url: FileManager.default.temporaryDirectory.appendingPathComponent("filmyears_dev.store")
-            )]
+                cloudKitDatabase: .private("iCloud.com.chocklee.filmyears")
+            )
+        } else {
+            config = ModelConfiguration(schema: schema)
         }
 
-        if let c = try? ModelContainer(for: schema, configurations: [configs[0]]) {
-            container = c
-        } else {
-            // If persistent config fails, fall back to in-memory.
-            let fallback = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-            container = (try? ModelContainer(for: schema, configurations: [fallback]))
-                ?? (try! ModelContainer())
-        }
+        container = try ModelContainer(for: schema, configurations: [config])
     }
 
     func makeBackgroundActor() -> FilmRollActor {
@@ -63,20 +70,23 @@ actor FilmRollActor {
             let roll = FilmRoll(year: year)
             modelContext.insert(roll)
 
+            let yearStartComponents = DateComponents(year: year, month: 1, day: 1)
             let yearStart: Date = year == birthYear
                 ? birthDate
-                : calendar.date(from: DateComponents(year: year, month: 1, day: 1))!
+                : calendar.date(from: yearStartComponents) ?? birthDate
 
+            let yearEndComponents = DateComponents(year: year, month: 12, day: 31)
             let yearEnd: Date = year == endYear
                 ? endDate
-                : calendar.date(from: DateComponents(year: year, month: 12, day: 31))!
+                : calendar.date(from: yearEndComponents) ?? endDate
 
             var currentDate = yearStart
             while currentDate <= yearEnd {
                 let frame = FilmFrame(date: currentDate)
                 frame.roll = roll
                 modelContext.insert(frame)
-                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+                guard let next = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
+                currentDate = next
             }
             roll.isInitialized = true
         }
@@ -95,7 +105,7 @@ actor FilmRollActor {
 
         let yearPredicate = #Predicate<FilmRoll> { $0.year == currentYear }
         let yearDescriptor = FetchDescriptor(predicate: yearPredicate)
-        let rolls = try modelContext.fetch(yearDescriptor)
+        guard let rolls = try? modelContext.fetch(yearDescriptor) else { return }
 
         let roll: FilmRoll
         if let existingRoll = rolls.first {

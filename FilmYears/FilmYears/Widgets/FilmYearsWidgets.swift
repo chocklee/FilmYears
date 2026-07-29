@@ -12,7 +12,8 @@ struct TodayFrameProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<TodayFrameEntry>) -> Void) {
         let entry = TodayFrameEntry(date: .now, isFilled: false)
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: 15, to: .now)!
+        let refreshInterval: TimeInterval = 15 * 60
+        let refreshDate = Date.now.addingTimeInterval(refreshInterval)
         completion(Timeline(entries: [entry], policy: .after(refreshDate)))
     }
 }

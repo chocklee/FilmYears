@@ -2,9 +2,12 @@ import UIKit
 
 /// Photo operations using local file storage
 enum PhotoManager {
-    nonisolated static let documentsDir = FileManager.default
-        .urls(for: .documentDirectory, in: .userDomainMask).first!
-        .appendingPathComponent("frames", isDirectory: true)
+    nonisolated static let documentsDir: URL = {
+        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            fatalError("Cannot access document directory")
+        }
+        return url.appendingPathComponent("frames", isDirectory: true)
+    }()
 
     @MainActor
     static func savePhoto(_ image: UIImage, for date: Date) throws -> String {
