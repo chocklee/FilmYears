@@ -2,7 +2,7 @@ import SwiftUI
 import PhotosUI
 
 struct FilmFrameCard: View {
-    let frame: FilmFrame
+    @Bindable var frame: FilmFrame
     @State private var showEditor = false
 
     var body: some View {

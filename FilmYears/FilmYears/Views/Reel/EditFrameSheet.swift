@@ -1,8 +1,10 @@
 import SwiftUI
 import PhotosUI
+import SwiftData
 
 struct EditFrameSheet: View {
     let frame: FilmFrame
+    @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @State private var note: String = ""
     @State private var selectedPhoto: PhotosPickerItem?
@@ -131,6 +133,7 @@ struct EditFrameSheet: View {
             frame.photoPath = nil
         }
 
+        try? context.save()
         dismiss()
     }
 }

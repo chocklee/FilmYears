@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ReelView: View {
-    let roll: FilmRoll
+    @Bindable var roll: FilmRoll
 
     private var sortedFrames: [FilmFrame] {
         roll.frames.sorted { $0.date < $1.date }
