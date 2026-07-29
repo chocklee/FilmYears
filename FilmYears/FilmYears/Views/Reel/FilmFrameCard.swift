@@ -63,7 +63,7 @@ struct FilmFrameCard: View {
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
-                .presentationDetents([.medium])
+                .presentationDetents([.height(540)])
         }
         .onChange(of: frame.isFilled) { _, filled in
             withAnimation(.easeInOut(duration: 0.4)) {
