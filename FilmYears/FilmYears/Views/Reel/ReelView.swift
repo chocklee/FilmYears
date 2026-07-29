@@ -11,22 +11,6 @@ struct ReelView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("\(roll.yearFormatted) 年")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.textPrimary)
-                    Text(roll.frameCountFormatted)
-                        .font(.caption)
-                        .foregroundColor(.textSecondary)
-                }
-                Spacer()
-            }
-            .padding(.horizontal, Spacing.xl)
-            .padding(.vertical, Spacing.md)
-
             Divider()
                 .background(Color.borderStandard)
 
@@ -48,7 +32,7 @@ struct ReelView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("\(roll.year) 年")
+                Text("\(roll.yearFormatted) 年")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.textPrimary)
             }
