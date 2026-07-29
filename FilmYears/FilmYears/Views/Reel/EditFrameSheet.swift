@@ -17,26 +17,25 @@ struct EditFrameSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 0) {
             // Drag handle
             RoundedRectangle(cornerRadius: 2)
-                .fill(Color(.systemGray4))
+                .fill(Color.white.opacity(0.2))
                 .frame(width: 36, height: 4)
-                .padding(.top, 8)
+                .padding(.top, 12)
 
             // Date title
             Text(frame.fullDate)
-                .font(.headline)
-                .fontWeight(.semibold)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(.textPrimary)
+                .padding(.top, 20)
+                .padding(.bottom, 24)
 
             // Photo picker area
             PhotosPicker(selection: $selectedPhoto, matching: .images) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(
-                            hasPhoto ? Color.accentColor : Color(.systemGray4),
-                            style: StrokeStyle(lineWidth: hasPhoto ? 2 : 1.5, dash: hasPhoto ? [] : [6])
-                        )
+                        .fill(Color(hex: "#131313"))
                         .aspectRatio(4 / 3, contentMode: .fit)
 
                     if hasPhoto, let image = previewImage {
@@ -49,13 +48,20 @@ struct EditFrameSheet: View {
                         VStack(spacing: 8) {
                             Image(systemName: "photo.badge.plus")
                                 .font(.title2)
-                                .foregroundColor(.secondary)
-                            Text(hasPhoto ? "点击更换照片" : "点击添加照片")
-                                .font(.caption)
-                                .foregroundStyle(.tertiary)
+                                .foregroundColor(.textTertiary)
+                            Text("点击添加照片")
+                                .font(.system(size: 13))
+                                .foregroundColor(.textTertiary)
                         }
                     }
                 }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(
+                            hasPhoto ? Color.clear : Color.white.opacity(0.1),
+                            style: StrokeStyle(lineWidth: 1, dash: [4])
+                        )
+                )
             }
             .onChange(of: selectedPhoto) { _, newItem in
                 Task {
@@ -64,14 +70,21 @@ struct EditFrameSheet: View {
                     hasPhoto = true
                 }
             }
+            .padding(.horizontal, 24)
 
             // Note input
             VStack(spacing: 8) {
                 TextField("添加一行备注（最多 80 字符）", text: $note, axis: .vertical)
                     .textFieldStyle(.plain)
+                    .font(.system(size: 15))
+                    .foregroundColor(.textPrimary)
                     .padding(12)
-                    .background(Color(.systemGray6))
+                    .background(Color(hex: "#131313"))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    )
                     .onChange(of: note) { _, newValue in
                         if newValue.count > 80 { note = String(newValue.prefix(80)) }
                     }
@@ -79,34 +92,52 @@ struct EditFrameSheet: View {
                 HStack {
                     Spacer()
                     Text("\(note.count)/80")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                        .font(.system(size: 11))
+                        .foregroundColor(.textTertiary)
                 }
             }
+            .padding(.horizontal, 24)
+            .padding(.top, 16)
+
+            Spacer()
 
             // Action buttons
             HStack(spacing: 12) {
-                Button("删除照片", role: .destructive) {
+                Button(action: {
                     hasPhoto = false
                     photoData = nil
                     selectedPhoto = nil
+                }) {
+                    Text("删除照片")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(Color(hex: "#E74C3C"))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color(hex: "#131313"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color(hex: "#E74C3C").opacity(0.3), lineWidth: 1)
+                        )
                 }
-                .buttonStyle(.bordered)
-                .tint(.red)
 
-                Button("保存") {
-                    saveFrame()
+                Button(action: saveFrame) {
+                    Text("保存")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.accentGold)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.accentColor)
             }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 32)
         }
-        .padding()
-        .padding(.bottom, 16)
+        .background(Color.bgPrimary)
         .task {
             note = frame.note ?? ""
             hasPhoto = frame.isFilled
-            // Load existing photo data for preview
             if hasPhoto, let path = frame.photoPath {
                 photoData = try? Data(contentsOf: PhotoManager.documentsDir
                     .deletingLastPathComponent()
@@ -119,14 +150,12 @@ struct EditFrameSheet: View {
         frame.note = note.isEmpty ? nil : note
 
         if hasPhoto, let data = photoData {
-            // Save photo to disk
             let fileURL = PhotoManager.documentsDir
                 .appendingPathComponent("\(frame.date.timeIntervalSince1970).jpg")
             try? FileManager.default.createDirectory(at: PhotoManager.documentsDir, withIntermediateDirectories: true)
             try? data.write(to: fileURL)
             frame.photoPath = "frames/\(frame.date.timeIntervalSince1970).jpg"
         } else {
-            // Delete existing photo
             if let path = frame.photoPath {
                 PhotoManager.deletePhoto(at: path)
             }
