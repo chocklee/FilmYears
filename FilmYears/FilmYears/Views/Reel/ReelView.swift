@@ -3,16 +3,42 @@ import SwiftUI
 struct ReelView: View {
     let roll: FilmRoll
 
+    private var sortedFrames: [FilmFrame] {
+        roll.frames.sorted { $0.date < $1.date }
+    }
+
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 20) {
-                ForEach(roll.frames.sorted(by: { $0.date < $1.date })) { frame in
-                    FilmFrameCard(frame: frame)
+        VStack(spacing: 0) {
+            // Header strip
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(roll.year) 年")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("\(roll.filledCount)/\(roll.totalCount) 帧 · \(Int(roll.fillRatio * 100))% 已填充")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
+                Spacer()
             }
-            .padding()
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color(.systemBackground))
+
+            Divider()
+
+            // Frame list
+            ScrollView {
+                LazyVStack(spacing: 24) {
+                    ForEach(sortedFrames) { frame in
+                        FilmFrameCard(frame: frame)
+                    }
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 16)
+            }
         }
-        .navigationTitle("\(roll.year) 年")
+        .background(Color(.systemGray6))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
