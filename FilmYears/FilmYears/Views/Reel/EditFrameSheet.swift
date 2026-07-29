@@ -31,13 +31,12 @@ struct EditFrameSheet: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
-                .padding(.bottom, 24)
 
             // Photo picker area
             PhotosPicker(selection: $selectedPhoto, matching: .images) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(hex: "#131313"))
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.bgPrimary)
                         .frame(height: 218)
 
                     if hasPhoto, let image = previewImage {
@@ -60,10 +59,10 @@ struct EditFrameSheet: View {
                 }
                 .frame(maxWidth: .infinity)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: 8)
                         .stroke(
-                            hasPhoto ? Color.clear : Color.white.opacity(0.1),
-                            style: StrokeStyle(lineWidth: 1, dash: [4])
+                            hasPhoto ? Color.clear : Color(hex: "#4F4537"),
+                            style: StrokeStyle(lineWidth: 2, dash: [4])
                         )
                 )
             }
@@ -74,21 +73,21 @@ struct EditFrameSheet: View {
                     hasPhoto = true
                 }
             }
-            .padding(.horizontal, 24)
+            .padding(24)
 
             // Note input
             VStack(spacing: 8) {
                 TextField("添加一行备注（最多 80 字符）", text: $note, axis: .vertical)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 15))
-                    .foregroundColor(.textPrimary)
-                    .padding(12)
+                    .font(.system(size: 16))
+                    .foregroundColor(Color.textPrimary)
+                    .padding(16)
                     .frame(height: 100, alignment: .top)
-                    .background(Color(hex: "#131313"))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .background(Color.bgPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color(hex: "#4F4537"), lineWidth: 1)
                     )
                     .onChange(of: note) { _, newValue in
                         if newValue.count > 80 { note = String(newValue.prefix(80)) }
@@ -97,14 +96,12 @@ struct EditFrameSheet: View {
                 HStack {
                     Spacer()
                     Text("\(note.count)/80")
-                        .font(.system(size: 11))
+                        .font(.system(size: 13))
                         .foregroundColor(.textTertiary)
                 }
             }
             .padding(.horizontal, 24)
-            .padding(.top, 16)
-
-            Spacer()
+            .padding(.bottom, 24)
 
             // Action buttons
             HStack(spacing: 12) {
