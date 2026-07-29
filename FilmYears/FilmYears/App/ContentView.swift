@@ -2,9 +2,12 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var context
     @Query private var settings: [AppSettings]
     @State private var showOnboarding = true
+
+    private var onboardingCompleted: Bool {
+        settings.first?.onboardingCompleted ?? false
+    }
 
     var body: some View {
         Group {
@@ -20,14 +23,11 @@ struct ContentView: View {
                     .transition(.opacity)
             }
         }
-        .task {
-            checkOnboardingStatus()
+        .onChange(of: onboardingCompleted) { _, completed in
+            if completed { showOnboarding = false }
         }
-    }
-
-    private func checkOnboardingStatus() {
-        if let setting = settings.first, setting.onboardingCompleted {
-            showOnboarding = false
+        .onAppear {
+            if onboardingCompleted { showOnboarding = false }
         }
     }
 }
