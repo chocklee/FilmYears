@@ -58,11 +58,11 @@ private struct RollRowView: View {
 
             // Year info
             VStack(alignment: .leading, spacing: 2) {
-                Text(roll.year.formatted(.number.grouping(.never)))
+                Text(roll.yearFormatted)
                     .font(.system(size: 30, weight: .regular))
                     .foregroundColor(Color(hex: "#F4BD61"))
 
-                Text("\(roll.filledCount.formatted(.number.grouping(.never)))/\(roll.totalCount.formatted(.number.grouping(.never))) 帧已填充")
+                Text(roll.frameCountFormatted)
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(Color(hex: "#6B6660"))
             }
@@ -71,16 +71,16 @@ private struct RollRowView: View {
 
             // Density bar
             ZStack {
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                
                 RoundedRectangle(cornerRadius: 2)
                     .fill(Color.bgCardStrong)
                     .overlay(alignment: .bottom) {
                         RoundedRectangle(cornerRadius: 2)
                             .fill(Color.accentGold)
-                            .frame(height: 48 * roll.fillRatio)
+                            .frame(width: 4, height: 48 * roll.fillRatio)
                     }
-
-                RoundedRectangle(cornerRadius: 2)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
             }
             .frame(width: 6, height: 48)
         }

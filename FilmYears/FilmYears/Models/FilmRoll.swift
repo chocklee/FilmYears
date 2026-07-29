@@ -20,4 +20,12 @@ extension FilmRoll {
     var filledCount: Int { frames.filter(\.isFilled).count }
     var totalCount: Int { frames.count }
     var fillRatio: Double { totalCount > 0 ? Double(filledCount) / Double(totalCount) : 0 }
+
+    var yearFormatted: String {
+        year.formatted(.number.grouping(.never))
+    }
+
+    var frameCountFormatted: String {
+        "\(filledCount.formatted(.number.grouping(.never)))/\(totalCount.formatted(.number.grouping(.never))) 帧已填充"
+    }
 }
