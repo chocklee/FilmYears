@@ -29,12 +29,13 @@ struct ReelView: View {
         }
         .id(refreshID)
         .background(Color.bgPrimary)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarBackground(Color.bgPrimary, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("\(roll.yearFormatted) 年")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.textPrimary)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
