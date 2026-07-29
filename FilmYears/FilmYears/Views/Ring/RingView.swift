@@ -67,7 +67,6 @@ struct RingView: View {
                     if let roll = rolls.first { exportRing(roll: roll) }
                 } label: {
                     Image(systemName: "square.and.arrow.down")
-                        .foregroundColor(.textSecondary)
                 }
             }
         }
