@@ -20,6 +20,7 @@ struct FilmRollListView: View {
                 .padding(Spacing.xl)
             }
             .background(Color.bgPrimary)
+            .tint(.textSecondary)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {

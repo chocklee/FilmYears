@@ -53,6 +53,7 @@ struct RingOverviewView: View {
                 }
                 .padding(.vertical, 16)
             }
+            .tint(.textSecondary)
             .navigationTitle("FilmYears")
         }
     }

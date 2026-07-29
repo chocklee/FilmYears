@@ -9,7 +9,6 @@ struct FilmYearsApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.dark)
-                .tint(.textSecondary)
         }
         .modelContainer(persistenceController.container)
     }
