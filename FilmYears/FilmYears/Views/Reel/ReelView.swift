@@ -11,23 +11,24 @@ struct ReelView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header strip
+            // Header
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("\(roll.year) 年")
+                    Text("\(roll.yearFormatted) 年")
                         .font(.title2)
                         .fontWeight(.bold)
-                    Text("\(roll.filledCount)/\(roll.totalCount) 帧 · \(Int(roll.fillRatio * 100))% 已填充")
+                        .foregroundColor(.textPrimary)
+                    Text(roll.frameCountFormatted)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondary)
                 }
                 Spacer()
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Color(.systemBackground))
+            .padding(.horizontal, Spacing.xl)
+            .padding(.vertical, Spacing.md)
 
             Divider()
+                .background(Color.borderStandard)
 
             // Frame list
             ScrollView {
@@ -36,21 +37,27 @@ struct ReelView: View {
                         FilmFrameCard(frame: frame, onUpdate: {
                             refreshID = UUID()
                         })
+                        .padding(.horizontal, Spacing.lg)
                     }
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 16)
+                .padding(.vertical, Spacing.lg)
             }
         }
         .id(refreshID)
-        .background(Color(.systemGray6))
+        .background(Color.bgPrimary)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("\(roll.year) 年")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundColor(.textPrimary)
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
                     RingView(year: roll.year)
                 } label: {
                     Image(systemName: "circle.dotted")
+                        .foregroundColor(.textSecondary)
                 }
             }
         }

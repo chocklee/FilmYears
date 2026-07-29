@@ -22,7 +22,7 @@ struct FilmRollListView: View {
             .background(Color.bgPrimary)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .principal) {
                     HStack(spacing: 8) {
                         Image("AppLogo")
                             .resizable()
