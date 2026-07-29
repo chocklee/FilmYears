@@ -37,17 +37,13 @@ struct PersistenceController {
             )]
         }
 
-        var c: ModelContainer?
-        for config in configs {
-            c = try? ModelContainer(for: schema, configurations: [config])
-            if c != nil { break }
-        }
-
-        container = c ?? (try? ModelContainer(for: schema, configurations: [ModelConfiguration(isStoredInMemoryOnly: true)]))!
-        
-        // Ultimate safety: this always works in practice
-        guard container != nil else {
-            fatalError("Unexpected: ModelContainer initialization failed")
+        if let c = try? ModelContainer(for: schema, configurations: [configs[0]]) {
+            container = c
+        } else {
+            // If persistent config fails, fall back to in-memory.
+            let fallback = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            container = (try? ModelContainer(for: schema, configurations: [fallback]))
+                ?? (try! ModelContainer())
         }
     }
 
