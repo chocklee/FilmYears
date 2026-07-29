@@ -42,14 +42,7 @@ struct FilmFrameCard: View {
                         }
                     }
 
-                    // Grain overlay
-                    FilmGrainOverlay()
-
-                    // Focus / ScreenTime tint
-                    FrameTintOverlay(
-                        focusActive: frame.focusActive,
-                        screenTimeScore: frame.screenTimeScore
-                    )
+                    // Border overlay
                 }
                 .background(Color(hex: "#131313").opacity(0.3))
 

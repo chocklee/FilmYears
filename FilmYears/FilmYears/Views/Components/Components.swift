@@ -27,15 +27,6 @@ struct SprocketHoles: View {
     }
 }
 
-// MARK: - Film Grain Overlay (SVG noise)
-struct FilmGrainOverlay: View {
-    var body: some View {
-        Rectangle()
-            .fill(Color.black.opacity(0.03))
-            .allowsHitTesting(false)
-    }
-}
-
 // MARK: - Density Bar
 struct DensityBar: View {
     let ratio: Double
@@ -82,28 +73,5 @@ struct MiniFilmStrip: View {
                 .foregroundColor(.secondary)
         }
         .frame(width: 48, height: 48)
-    }
-}
-
-// MARK: - Focus/ScreenTime color indicator
-struct FrameTintOverlay: View {
-    let focusActive: Bool?
-    let screenTimeScore: Double?
-
-    var body: some View {
-        ZStack(alignment: .top) {
-            if focusActive == true {
-                Color.accentColor.opacity(0.12)
-            }
-            if let score = screenTimeScore, score > 0.5 {
-                VStack {
-                    Rectangle()
-                        .fill(Color.orange.opacity(0.3))
-                        .frame(height: 3)
-                    Spacer()
-                }
-            }
-        }
-        .allowsHitTesting(false)
     }
 }
