@@ -6,7 +6,7 @@ struct ReelView: View {
     @State private var refreshID = UUID()
 
     private var sortedFrames: [FilmFrame] {
-        roll.frames.sorted { $0.date < $1.date }
+        roll.frames.sorted { $0.date > $1.date }
     }
 
     var body: some View {
