@@ -70,14 +70,19 @@ private struct RollRowView: View {
             Spacer()
 
             // Density bar
-            RoundedRectangle(cornerRadius: 2)
-                .fill(Color.bgCardStrong)
-                .frame(width: 4, height: 40)
-                .overlay(alignment: .bottom) {
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(Color.accentGold)
-                        .frame(height: 40 * roll.fillRatio)
-                }
+            ZStack {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.bgCardStrong)
+                    .overlay(alignment: .bottom) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.accentGold)
+                            .frame(height: 48 * roll.fillRatio)
+                    }
+
+                RoundedRectangle(cornerRadius: 2)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+            }
+            .frame(width: 6, height: 48)
         }
         .frame(height: 82)
         .padding(.trailing, Spacing.lg)
