@@ -3,8 +3,6 @@ import SwiftData
 
 struct ReelView: View {
     @Bindable var roll: FilmRoll
-    @State private var refreshID = UUID()
-    @State private var scrollTarget: FilmFrame?
 
     private var sortedFrames: [FilmFrame] {
         roll.frames.sorted { $0.date > $1.date }
@@ -16,9 +14,8 @@ struct ReelView: View {
                 LazyVStack(spacing: 32) {
                     ForEach(sortedFrames) { frame in
                         FilmFrameCard(frame: frame, onUpdate: { edited in
-                            scrollTarget = edited
                             withAnimation(.easeInOut(duration: 0.3)) {
-                                refreshID = UUID()
+                                proxy.scrollTo(edited.id, anchor: .center)
                             }
                         })
                         .padding(.horizontal, Spacing.xl)
@@ -26,16 +23,6 @@ struct ReelView: View {
                     }
                 }
                 .padding(.vertical, Spacing.xl)
-            }
-            .id(refreshID)
-            .transition(.opacity)
-            .onChange(of: refreshID) { _, _ in
-                if let target = scrollTarget {
-                    withAnimation {
-                        proxy.scrollTo(target.id, anchor: .center)
-                    }
-                    scrollTarget = nil
-                }
             }
         }
         .background(Color.bgPrimary)
