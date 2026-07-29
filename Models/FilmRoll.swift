@@ -1,0 +1,23 @@
+import SwiftData
+import Foundation
+
+@Model
+final class FilmRoll {
+    @Attribute(.unique) var year: Int
+    var createdAt: Date
+    var isInitialized: Bool
+
+    @Relationship(deleteRule: .cascade) var frames: [FilmFrame] = []
+
+    init(year: Int) {
+        self.year = year
+        self.createdAt = .now
+        self.isInitialized = false
+    }
+}
+
+extension FilmRoll {
+    var filledCount: Int { frames.filter(\.isFilled).count }
+    var totalCount: Int { frames.count }
+    var fillRatio: Double { totalCount > 0 ? Double(filledCount) / Double(totalCount) : 0 }
+}

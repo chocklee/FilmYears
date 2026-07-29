@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>info</key>
+    <dict>
+        <key>author</key>
+        <string>FilmYears Team</string>
+        <key>version</key>
+        <integer>1</integer>
+    </dict>
+    <key>properties</key>
+    <dict>
+        <key>AccentColor</key>
+        <dict>
+            <key>color</key>
+            <dict>
+                <key>color-space</key>
+                <string>srgb</string>
+                <key>components</key>
+                <dict>
+                    <key>alpha</key>
+                    <string>1.000</string>
+                    <key>blue</key>
+                    <string>0.243</string>
+                    <key>green</key>
+                    <string>0.588</string>
+                    <key>red</key>
+                    <string>0.784</string>
+                </dict>
+            </dict>
+        </dict>
+    </dict>
+</dict>
+</plist>
