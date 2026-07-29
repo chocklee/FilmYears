@@ -2,20 +2,24 @@ import SwiftUI
 
 // MARK: - Sprocket Holes
 struct SprocketHoles: View {
-    let highlighted: Bool
     let height: CGFloat
+    let glowIndex: Int?
 
-    init(highlighted: Bool = false, height: CGFloat = 343) {
-        self.highlighted = highlighted
+    init(height: CGFloat = 343, glowIndex: Int? = nil) {
         self.height = height
+        self.glowIndex = glowIndex
     }
 
     var body: some View {
         VStack(spacing: 50) {
             ForEach(0 ..< 5) { i in
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(Color(hex: "#C8963E").opacity(highlighted ? 0.4 : 0.2))
+                    .fill(glowIndex == i ? Color.textPrimary : Color(hex: "#C8963E").opacity(0.2))
                     .frame(width: 12, height: 12)
+                    .shadow(
+                        color: glowIndex == i ? Color.textPrimary.opacity(0.6) : .clear,
+                        radius: glowIndex == i ? 6 : 0
+                    )
             }
         }
         .frame(width: 32, height: height)

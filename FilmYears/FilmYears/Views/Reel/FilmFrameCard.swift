@@ -5,6 +5,7 @@ struct FilmFrameCard: View {
     @Bindable var frame: FilmFrame
     let onUpdate: (() -> Void)?
     @State private var showEditor = false
+    @State private var glowIndex: Int?
 
     init(frame: FilmFrame, onUpdate: (() -> Void)? = nil) {
         self.frame = frame
@@ -14,7 +15,7 @@ struct FilmFrameCard: View {
     var body: some View {
         HStack(spacing: 0) {
             // Left sprocket holes
-            SprocketHoles(highlighted: frame.focusActive ?? false, height: 343)
+            SprocketHoles(height: 343, glowIndex: glowIndex)
 
             // Frame body
             VStack(spacing: 0) {
@@ -49,7 +50,7 @@ struct FilmFrameCard: View {
                         screenTimeScore: frame.screenTimeScore
                     )
                 }
-                .background(Color(hex: "131313").opacity(0.3))
+                .background(Color(hex: "#131313").opacity(0.3))
 
                 // Bottom info bar (film edge marking style)
                 HStack {
@@ -59,9 +60,9 @@ struct FilmFrameCard: View {
                     Spacer()
                     if let note = frame.note, !note.isEmpty {
                         Text(note)
-                            .font(.caption2)
+                            .font(.system(size: 16, weight: .medium))
                             .lineLimit(1)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.textTertiary)
                     }
                 }
                 .frame(height: 57)
@@ -77,15 +78,21 @@ struct FilmFrameCard: View {
             )
 
             // Right sprocket holes
-            SprocketHoles(highlighted: frame.focusActive ?? false, height: 343)
+            SprocketHoles(height: 343, glowIndex: glowIndex)
         }
         .frame(height: 343)
+        .background(Color(.systemGray5))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
                 .onDisappear {
                     onUpdate?()
                 }
+        }
+        .onAppear {
+            glowIndex = frame.isFilled ? Int.random(in: 0...4) : nil
         }
     }
 }
