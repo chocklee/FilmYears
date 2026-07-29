@@ -3,7 +3,13 @@ import PhotosUI
 
 struct FilmFrameCard: View {
     @Bindable var frame: FilmFrame
+    let onUpdate: (() -> Void)?
     @State private var showEditor = false
+
+    init(frame: FilmFrame, onUpdate: (() -> Void)? = nil) {
+        self.frame = frame
+        self.onUpdate = onUpdate
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -72,6 +78,9 @@ struct FilmFrameCard: View {
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
+                .onDisappear {
+                    onUpdate?()
+                }
         }
     }
 }

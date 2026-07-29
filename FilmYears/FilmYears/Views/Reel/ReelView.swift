@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct ReelView: View {
     @Bindable var roll: FilmRoll
+    @State private var refreshID = UUID()
 
     private var sortedFrames: [FilmFrame] {
         roll.frames.sorted { $0.date < $1.date }
@@ -31,13 +33,16 @@ struct ReelView: View {
             ScrollView {
                 LazyVStack(spacing: 24) {
                     ForEach(sortedFrames) { frame in
-                        FilmFrameCard(frame: frame)
+                        FilmFrameCard(frame: frame, onUpdate: {
+                            refreshID = UUID()
+                        })
                     }
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 16)
             }
         }
+        .id(refreshID)
         .background(Color(.systemGray6))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
