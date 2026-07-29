@@ -30,13 +30,60 @@ struct FilmFrameCard: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .clipped()
                     } else {
-                        VStack(spacing: 8) {
-                            Image(systemName: "photo.badge.plus")
-                                .font(.title2)
-                                .foregroundColor(.secondary)
-                            Text("空白底片")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                        ZStack {
+                            // Film negative base
+                            Rectangle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color(.systemGray6),
+                                            Color(.systemGray5).opacity(0.5),
+                                            Color(.systemGray6),
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+
+                            // Subtle film-edge markings
+                            VStack {
+                                HStack {
+                                    Text(frame.displayDate)
+                                        .font(.system(size: 7, design: .monospaced))
+                                        .foregroundColor(.secondary.opacity(0.5))
+                                        .padding(.leading, 4)
+                                    Spacer()
+                                    Text("\(frame.roll?.year ?? 0)")
+                                        .font(.system(size: 7, design: .monospaced))
+                                        .foregroundColor(.secondary.opacity(0.5))
+                                        .padding(.trailing, 4)
+                                }
+                                .padding(.top, 2)
+
+                                Spacer()
+
+                                // Inviting capture icon
+                                VStack(spacing: 6) {
+                                    Image(systemName: "camera.viewfinder")
+                                        .font(.title3)
+                                        .foregroundColor(.secondary.opacity(0.4))
+                                    Text("轻触记录")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary.opacity(0.4))
+                                }
+
+                                Spacer()
+
+                                // Film frame number
+                                HStack {
+                                    Spacer()
+                                    Text("✦")
+                                        .font(.system(size: 6))
+                                        .foregroundColor(.secondary.opacity(0.3))
+                                        .padding(.trailing, 4)
+                                        .padding(.bottom, 2)
+                                }
+                            }
                         }
                     }
 
