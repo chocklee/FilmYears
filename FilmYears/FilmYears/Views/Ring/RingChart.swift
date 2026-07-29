@@ -58,7 +58,7 @@ private struct RingSegmentView: View {
         }
         .stroke(
             isFilled ? Color.accentGold : Color.bgCardStrong,
-            style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+            style: StrokeStyle(lineWidth: lineWidth, lineCap: .butt)
         )
     }
 }
