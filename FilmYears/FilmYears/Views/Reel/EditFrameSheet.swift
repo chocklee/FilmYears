@@ -38,13 +38,14 @@ struct EditFrameSheet: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(Color(hex: "#131313"))
-                        .aspectRatio(4 / 3, contentMode: .fit)
+                        .frame(height: 218)
 
                     if hasPhoto, let image = previewImage {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(maxWidth: .infinity, maxHeight: 218)
+                            .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     } else {
                         VStack(spacing: 8) {
@@ -57,6 +58,7 @@ struct EditFrameSheet: View {
                         }
                     }
                 }
+                .frame(maxWidth: .infinity)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(
