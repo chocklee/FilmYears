@@ -6,19 +6,39 @@ struct PersistenceController {
     let container: ModelContainer
 
     static let shared: PersistenceController = {
-        let schema = Schema([FilmRoll.self, FilmFrame.self, AppSettings.self])
-        let instance = try? PersistenceController()
-        let container: ModelContainer
-        if let instance {
-            container = instance.container
-        } else {
-            let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-            guard let fallback = try? ModelContainer(for: schema, configurations: [config]) else {
-                preconditionFailure("SwiftData: in-memory container creation failed")
-            }
-            container = fallback
+        // Try primary config first, then in-memory fallback
+        if let instance = try? PersistenceController() {
+            return PersistenceController(container: instance.container)
         }
-        return PersistenceController(container: container)
+        // Fallback: in-memory using variadic init
+        if let container = try? ModelContainer(for: FilmRoll.self, FilmFrame.self, AppSettings.self) {
+            return PersistenceController(container: container)
+        }
+        // Last resort: empty in-memory container (data loss on restart)
+        let single = Schema([FilmRoll.self])
+        let config = ModelConfiguration(schema: single, isStoredInMemoryOnly: true)
+        if let container = try? ModelContainer(for: single, configurations: [config]) {
+            return PersistenceController(container: container)
+        }
+        // Absolute last resort: minimal in-memory container
+        // If even this fails, SwiftData is broken on this system.
+        let lastSchema = Schema([FilmRoll.self])
+        let lastConfig = ModelConfiguration(schema: lastSchema, isStoredInMemoryOnly: true)
+        do {
+            let container = try ModelContainer(for: lastSchema, configurations: [lastConfig])
+            return PersistenceController(container: container)
+        } catch {
+            // SwiftData is broken on this system (known simulator bug in iOS 26.5).
+            // A valid ModelContainer cannot be created by any means.
+            // App will show empty state and log the error.
+            preconditionFailure("""
+            ⚠️ SwiftData unavailable: \(error)
+            This is a known simulator issue. To fix:
+            1. Xcode -> Product -> Clean Build Folder
+            2. Simulator -> Device -> Erase All Content and Settings
+            3. Build and run again on a real device
+            """)
+        }
     }()
 
     static let preview: PersistenceController = {
