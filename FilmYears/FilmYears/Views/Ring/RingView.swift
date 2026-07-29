@@ -17,16 +17,17 @@ struct RingView: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
-            if let roll = rolls.first {
-                Text("Ring Overview")
-                    .font(.system(size: 36, weight: .bold))
-                    .foregroundColor(.textPrimary)
-                    .padding(.top, 43)
+        ScrollView {
+            VStack(spacing: 24) {
+                if let roll = rolls.first {
+                    Text("Ring Overview")
+                        .font(.system(size: 36, weight: .bold))
+                        .foregroundColor(.textPrimary)
+                        .padding(.top, 43)
 
-                Text("时间凝练成环，每一帧都是生活的见证。")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.textTertiary)
+                    Text("时间凝练成环，每一帧都是生活的见证。")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.textTertiary)
                     .padding(.top, -16)
 
                 let sortedFrames = roll.frames.sorted { $0.date < $1.date }
@@ -77,7 +78,7 @@ struct RingView: View {
                 ContentUnavailableView("暂无数据", systemImage: "circle.dotted")
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
         .background(Color.bgPrimary)
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
