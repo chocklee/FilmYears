@@ -30,10 +30,14 @@ struct RingView: View {
                     .padding(.top, -16)
 
                 let sortedFrames = roll.frames.sorted { $0.date < $1.date }
-                RingChart(frames: sortedFrames) { _ in
-                    dismiss()
+                HStack {
+                    Spacer()
+                    RingChart(frames: sortedFrames) { _ in
+                        dismiss()
+                    }
+                    .frame(width: 300, height: 300)
+                    Spacer()
                 }
-                .frame(width: 300, height: 300)
                 .padding(.top, 56)
 
                 Text("\(roll.frameCountFormatted) 天已填充")
