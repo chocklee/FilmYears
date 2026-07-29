@@ -5,7 +5,9 @@ enum PreviewData {
     @MainActor
     static func inject(into context: ModelContext) throws {
         let calendar = Calendar.current
-        let birthDate = calendar.date(from: DateComponents(year: 1995, month: 6, day: 15))!
+        guard let birthDate = calendar.date(from: DateComponents(year: 1995, month: 6, day: 15)) else {
+            throw PreviewError.invalidDate
+        }
 
         let settings = AppSettings(birthDate: birthDate)
         settings.onboardingCompleted = true
@@ -19,8 +21,10 @@ enum PreviewData {
             let roll = FilmRoll(year: year)
             context.insert(roll)
 
-            let startDate = calendar.date(from: DateComponents(year: year, month: 1, day: 1))!
-            let endDate = calendar.date(from: DateComponents(year: year, month: 12, day: 31))!
+            guard let startDate = calendar.date(from: DateComponents(year: year, month: 1, day: 1)),
+                  let endDate = calendar.date(from: DateComponents(year: year, month: 12, day: 31)) else {
+                throw PreviewError.invalidDate
+            }
 
             var currentDate = startDate
             while currentDate <= endDate {
@@ -33,12 +37,19 @@ enum PreviewData {
                 }
 
                 context.insert(frame)
-                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+                guard let next = calendar.date(byAdding: .day, value: 1, to: currentDate) else {
+                    throw PreviewError.invalidDate
+                }
+                currentDate = next
             }
             roll.isInitialized = true
         }
         try context.save()
     }
+}
+
+enum PreviewError: Error {
+    case invalidDate
 }
 
 fileprivate extension Date {

@@ -13,7 +13,10 @@ struct PersistenceController {
             container = instance.container
         } else {
             let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-            container = (try? ModelContainer(for: schema, configurations: [config]))!
+            guard let fallback = try? ModelContainer(for: schema, configurations: [config]) else {
+                preconditionFailure("SwiftData: in-memory container creation failed")
+            }
+            container = fallback
         }
         return PersistenceController(container: container)
     }()
@@ -21,7 +24,10 @@ struct PersistenceController {
     static let preview: PersistenceController = {
         let schema = Schema([FilmRoll.self, FilmFrame.self, AppSettings.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let instance = PersistenceController(container: try! ModelContainer(for: schema, configurations: [config]))
+        guard let container = try? ModelContainer(for: schema, configurations: [config]) else {
+            preconditionFailure("SwiftData: preview container creation failed")
+        }
+        let instance = PersistenceController(container: container)
         Task { @MainActor in
             try? PreviewData.inject(into: instance.container.mainContext)
         }
