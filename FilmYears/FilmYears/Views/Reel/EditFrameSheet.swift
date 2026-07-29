@@ -19,16 +19,18 @@ struct EditFrameSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             // Drag handle
-            RoundedRectangle(cornerRadius: 2)
-                .fill(Color.white.opacity(0.2))
-                .frame(width: 36, height: 4)
-                .padding(.top, 12)
+            RoundedRectangle(cornerRadius: 3)
+                .fill(Color(hex: "#353534"))
+                .frame(width: 48, height: 6)
+                .padding(.top, 16)
 
             // Date title
             Text(frame.fullDate)
-                .font(.system(size: 18, weight: .bold))
+                .font(.system(size: 28, weight: .regular))
                 .foregroundColor(.textPrimary)
-                .padding(.top, 20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
                 .padding(.bottom, 24)
 
             // Photo picker area
@@ -134,7 +136,7 @@ struct EditFrameSheet: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
-        .background(Color.bgPrimary)
+        .background(Color.bgCardStrong)
         .task {
             note = frame.note ?? ""
             hasPhoto = frame.isFilled
