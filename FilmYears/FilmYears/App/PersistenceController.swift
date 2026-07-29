@@ -15,7 +15,8 @@ struct PersistenceController {
 
     let container: ModelContainer
 
-    init(inMemory: Bool = false) {
+    /// - Parameter cloudKitEnabled: 设为 true 以启用 iCloud 同步（需 CloudKit 容器已配置）
+    init(inMemory: Bool = false, cloudKitEnabled: Bool = false) {
         let schema = Schema([
             FilmRoll.self,
             FilmFrame.self,
@@ -25,21 +26,23 @@ struct PersistenceController {
         let config: ModelConfiguration
         if inMemory {
             config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        } else {
+        } else if cloudKitEnabled {
             config = ModelConfiguration(
                 schema: schema,
                 cloudKitDatabase: .private("iCloud.com.chocklee.filmyears")
             )
+        } else {
+            config = ModelConfiguration(schema: schema)
         }
 
-        do {
-            container = try ModelContainer(for: schema, configurations: [config])
-        } catch {
-            // CloudKit container not available (e.g. first run, no iCloud account).
-            // Fall back to local-only container.
-            let fallback = ModelConfiguration(schema: schema)
-            container = (try? ModelContainer(for: schema, configurations: [fallback]))
-                ?? (try! ModelContainer())
+        // If CloudKit config fails (e.g. container not set up yet), fall back to local storage.
+        if let c = try? ModelContainer(for: schema, configurations: [config]) {
+            container = c
+        } else {
+            container = try! ModelContainer(
+                for: schema,
+                configurations: [ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)]
+            )
         }
     }
 
