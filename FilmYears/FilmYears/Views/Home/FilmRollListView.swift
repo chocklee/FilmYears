@@ -51,17 +51,10 @@ private struct RollRowView: View {
     var body: some View {
         HStack(spacing: 16) {
             // Film strip image
-            ZStack {
-                Image("FilmStripIcon")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 72)
-
-                Text("\(roll.filledCount)")
-                    .font(AppFont.caption.weight(.bold))
-                    .foregroundColor(.textSecondary)
-            }
-            .frame(width: 32)
+            Image("FilmStripIcon")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 32, height: 82)
 
             // Year info
             VStack(alignment: .leading, spacing: 2) {
@@ -86,7 +79,9 @@ private struct RollRowView: View {
                         .frame(height: 40 * roll.fillRatio)
                 }
         }
-        .padding(Spacing.lg)
+        .frame(height: 82)
+        .padding(.vertical, Spacing.lg)
+        .padding(.trailing, Spacing.lg)
         .background(Color.bgCard)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(
