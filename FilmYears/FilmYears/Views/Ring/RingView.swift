@@ -40,27 +40,39 @@ struct RingView: View {
                     HStack(spacing: 8) {
                         Circle()
                             .fill(Color.accentGold)
-                            .frame(width: 8, height: 8)
-                            .shadow(color: Color.accentGold.opacity(0.6), radius: 4)
+                            .frame(width: 10, height: 10)
+                            .shadow(color: Color.accentGold.opacity(0.6), radius: 5)
                         Text("已填充")
                             .foregroundColor(Color(hex: "#E5E2E1"))
                             .font(.system(size: 11, weight: .medium))
                     }
-                    Label("空白", systemImage: "circle")
-                        .foregroundColor(.textTertiary)
-                        .font(.system(size: 11, weight: .medium))
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(Color.bgCardStrong)
+                            .frame(width: 10, height: 10)
+                            .cornerRadius(5)
+                        Text("空白")
+                            .foregroundColor(.textTertiary)
+                            .font(.system(size: 11, weight: .medium))
+                    }
                 }
                 .padding(.top, 48)
 
                 Button {
                     exportRing(roll: roll)
                 } label: {
-                    Label("导出年轮图片", systemImage: "square.and.arrow.down")
+                    Text("导出年轮图片")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.textPrimary)
+                        .frame(maxWidth: .infinity, minHeight: 56)
+                        .background(Color.bgCard)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        )
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.accentColor)
-
-                Spacer()
+                .padding(.horizontal, 24)
             } else {
                 ContentUnavailableView("暂无数据", systemImage: "circle.dotted")
             }
