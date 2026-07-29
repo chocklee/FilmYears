@@ -3,7 +3,7 @@ import Foundation
 
 @Model
 final class FilmFrame {
-    @Attribute(.unique) var date: Date
+    var date: Date
     var photoPath: String?
     var note: String?
     var photoModifiedAt: Date?

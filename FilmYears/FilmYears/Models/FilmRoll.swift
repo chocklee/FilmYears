@@ -3,7 +3,7 @@ import Foundation
 
 @Model
 final class FilmRoll {
-    @Attribute(.unique) var year: Int
+    var year: Int
     var createdAt: Date
     var isInitialized: Bool
 

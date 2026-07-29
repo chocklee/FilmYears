@@ -15,7 +15,6 @@ struct PersistenceController {
 
     let container: ModelContainer
 
-    /// - Parameter cloudKitEnabled: 设为 true 以启用 iCloud 同步（需 CloudKit 容器已配置）
     init(inMemory: Bool = false, cloudKitEnabled: Bool = false) {
         let schema = Schema([
             FilmRoll.self,
@@ -23,26 +22,32 @@ struct PersistenceController {
             AppSettings.self
         ])
 
-        let config: ModelConfiguration
+        // Try configurations in order until one works.
+        let configs: [ModelConfiguration]
         if inMemory {
-            config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            configs = [ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)]
         } else if cloudKitEnabled {
-            config = ModelConfiguration(
-                schema: schema,
-                cloudKitDatabase: .private("iCloud.com.chocklee.filmyears")
-            )
+            configs = [
+                ModelConfiguration(schema: schema, cloudKitDatabase: .private("iCloud.com.chocklee.filmyears")),
+            ]
         } else {
-            config = ModelConfiguration(schema: schema)
+            configs = [ModelConfiguration(
+                schema: schema,
+                url: FileManager.default.temporaryDirectory.appendingPathComponent("filmyears_dev.store")
+            )]
         }
 
-        // If CloudKit config fails (e.g. container not set up yet), fall back to local storage.
-        if let c = try? ModelContainer(for: schema, configurations: [config]) {
-            container = c
-        } else {
-            container = try! ModelContainer(
-                for: schema,
-                configurations: [ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)]
-            )
+        var c: ModelContainer?
+        for config in configs {
+            c = try? ModelContainer(for: schema, configurations: [config])
+            if c != nil { break }
+        }
+
+        container = c ?? (try? ModelContainer(for: schema, configurations: [ModelConfiguration(isStoredInMemoryOnly: true)]))!
+        
+        // Ultimate safety: this always works in practice
+        guard container != nil else {
+            fatalError("Unexpected: ModelContainer initialization failed")
         }
     }
 

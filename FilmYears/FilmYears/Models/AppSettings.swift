@@ -3,7 +3,7 @@ import Foundation
 
 @Model
 final class AppSettings {
-    @Attribute(.unique) var id: String = "app_settings"
+    var id: String = "app_settings"
 
     var birthDate: Date
     var onboardingCompleted: Bool
