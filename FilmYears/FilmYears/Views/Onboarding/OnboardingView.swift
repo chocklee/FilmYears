@@ -3,7 +3,7 @@ import SwiftData
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var context
-    @State private var selectedYear = 1995
+    @State private var selectedYear = Calendar.current.component(.year, from: .now) - 29 // ~1995
     @State private var selectedMonth = 6
     @State private var selectedDay = 15
     @State private var isInitializing = false
@@ -11,9 +11,35 @@ struct OnboardingView: View {
     @State private var errorMessage = ""
     let completion: () -> Void
 
-    private let years = Array(1920...2026)
-    private let months = Array(1...12)
-    private let days = Array(1...31)
+    private let now = Calendar.current.startOfDay(for: .now)
+    private let currentYear = Calendar.current.component(.year, from: .now)
+    private let currentMonth = Calendar.current.component(.month, from: .now)
+    private let currentDay = Calendar.current.component(.day, from: .now)
+
+    private var years: [Int] { Array(1900...currentYear) }
+
+    private var months: [Int] {
+        selectedYear >= currentYear ? Array(1...currentMonth) : Array(1...12)
+    }
+
+    private var days: [Int] {
+        if selectedYear > currentYear { return [] }
+        if selectedYear == currentYear && selectedMonth > currentMonth { return [] }
+        if selectedYear == currentYear && selectedMonth == currentMonth {
+            return Array(1...currentDay)
+        }
+        let maxDay = Calendar.current.range(of: .day, in: .month, for: Calendar.current.date(
+            from: DateComponents(year: selectedYear, month: selectedMonth)
+        ) ?? .now)?.count ?? 30
+        return Array(1...maxDay)
+    }
+
+    private var isFutureDate: Bool {
+        guard let date = try? DateComponents(
+            year: selectedYear, month: selectedMonth, day: selectedDay
+        ).date else { return true }
+        return Calendar.current.startOfDay(for: date) > now
+    }
 
     private var birthDate: Date {
         Calendar.current.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: selectedDay)) ?? .now
@@ -21,7 +47,6 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            // Background — solid dark
             Color.black.ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -58,6 +83,29 @@ struct OnboardingView: View {
                         PickerField(label: "月", value: $selectedMonth, range: months, width: 80)
                         PickerField(label: "日", value: $selectedDay, range: days, width: 80)
                     }
+                    .onChange(of: selectedYear) { _, _ in
+                        if !months.contains(selectedMonth) {
+                            selectedMonth = months.last ?? 1
+                        }
+                        if !days.contains(selectedDay) {
+                            selectedDay = days.last ?? 1
+                        }
+                    }
+                    .onChange(of: selectedMonth) { _, _ in
+                        if !days.contains(selectedDay) {
+                            selectedDay = days.last ?? 1
+                        }
+                    }
+
+                    if isFutureDate {
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(Color(red: 0.78, green: 0.59, blue: 0.24))
+                            Text("出生日期不能是未来日期")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.5))
+                        }
+                    }
                 }
                 .padding(.bottom, 48)
 
@@ -75,11 +123,17 @@ struct OnboardingView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Color(red: 0.78, green: 0.59, blue: 0.24))
-                        .foregroundColor(.black)
+                        .background(
+                            (isFutureDate || isInitializing)
+                                ? Color.white.opacity(0.15)
+                                : Color(red: 0.78, green: 0.59, blue: 0.24)
+                        )
+                        .foregroundColor(
+                            (isFutureDate || isInitializing) ? .white.opacity(0.3) : .black
+                        )
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
-                    .disabled(isInitializing)
+                    .disabled(isInitializing || isFutureDate)
 
                     Text("只回望你已经活过的时光 · 不渲染未来")
                         .font(.system(size: 11))
