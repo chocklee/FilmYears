@@ -37,12 +37,18 @@ struct RingView: View {
                 .padding(.top, 56)
 
                 HStack(spacing: 16) {
-                    Label("已填充", systemImage: "circle.fill")
-                        .foregroundColor(.accentColor)
-                        .font(.caption)
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(Color.accentGold)
+                            .frame(width: 8, height: 8)
+                            .shadow(color: Color.accentGold.opacity(0.6), radius: 4)
+                        Text("已填充")
+                            .foregroundColor(Color(hex: "#E5E2E1"))
+                            .font(.system(size: 11, weight: .medium))
+                    }
                     Label("空白", systemImage: "circle")
-                        .foregroundColor(.secondary)
-                        .font(.caption)
+                        .foregroundColor(.textTertiary)
+                        .font(.system(size: 11, weight: .medium))
                 }
                 .padding(.top, 48)
 
