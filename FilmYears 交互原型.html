@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>FilmYears · 交互原型</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0d0d;
+  --surface:#171717;
+  --surface2:#1f1f1f;
+  --surface3:#2a2a2a;
+  --accent:#c8963e;
+  --accent-glow:#c8963e22;
+  --text:#f0ece4;
+  --text2:#a09a92;
+  --text3:#6b6660;
+  --border:#2a2a2a;
+  --sprocket:#c8963e33;
+  --danger:#e74c3c;
+  --success:#2ecc71;
+  --radius:14px;
+  --fs-title:28px;
+  --fs-h1:22px;
+  --fs-h2:18px;
+  --fs-body:15px;
+  --fs-caption:13px;
+  --fs-tiny:11px;
+  --safe-top:54px;
+  --safe-bottom:34px;
+}
+html,body{
+  height:100%;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  background:#000;
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+  user-select:none;
+}
+/* phone frame */
+#phone{
+  position:relative;
+  width:390px;
+  height:844px;
+  margin:20px auto;
+  background:var(--bg);
+  border-radius:44px;
+  overflow:hidden;
+  box-shadow:0 0 0 1px #333,0 20px 60px rgba(0,0,0,.8);
+}
+/* status bar */
+#status-bar{
+  position:absolute;top:0;left:0;right:0;z-index:100;
+  height:var(--safe-top);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;padding-top:12px;
+  font-size:var(--fs-caption);font-weight:600;color:var(--text2);
+}
+#status-bar .time{font-weight:700;color:var(--text)}
+#status-bar .icons{display:flex;gap:6px;align-items:center;font-size:12px}
+/* notch */
+#notch{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:101;
+  width:150px;height:30px;
+  background:#000;
+  border-radius:0 0 18px 18px;
+}
+/* screens */
+.screen{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  display:flex;flex-direction:column;
+  padding-top:var(--safe-top);
+  padding-bottom:var(--safe-bottom);
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease,transform .35s ease;
+@media (prefers-reduced-motion:reduce){
+  .screen,.modal-overlay,.modal-content{transition:none!important}
+  .screen,.modal-overlay,.modal-content{transform:none!important}
+}
+  transform:translateY(8px);
+}
+.screen.active{
+  opacity:1;pointer-events:auto;
+  transform:translateY(0);
+}
+.screen.prev{
+  opacity:0;pointer-events:none;
+  transform:translateY(-12px);
+}
+/* nav bar */
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;padding-bottom:8px;
+  flex-shrink:0;
+}
+.nav .left,.nav .right{display:flex;align-items:center;gap:16px}
+.nav-btn{
+  background:none;border:none;color:var(--accent);
+  font-size:var(--fs-body);cursor:pointer;
+  padding:4px 0;font-weight:500;
+  transition:opacity .2s;
+}
+.nav-btn:hover{opacity:.7}
+.nav-title{
+  font-size:var(--fs-h2);font-weight:700;
+  letter-spacing:-.3px;
+}
+/* content area */
+.content{
+  flex:1;overflow-y:auto;
+  padding:0 20px;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+}
+.content::-webkit-scrollbar{width:0}
+/* ========== ONBOARDING ========== */
+#onboarding{
+  justify-content:center;align-items:center;
+  text-align:center;padding:60px 32px;
+}
+#onboarding .logo{
+  font-size:36px;font-weight:800;
+  letter-spacing:-1px;margin-bottom:4px;
+  color:var(--accent);
+}
+#onboarding .tagline{
+  font-size:var(--fs-body);color:var(--text2);
+  margin-bottom:48px;line-height:1.5;
+}
+#onboarding .tagline span{display:block}
+.birth-picker{
+  display:flex;gap:12px;justify-content:center;
+  margin-bottom:40px;
+}
+.birth-picker .field{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 0;
+  width:90px;
+  transition:border-color .2s;
+}
+.birth-picker .field:focus-within{border-color:var(--accent)}
+.birth-picker .field label{
+  display:block;font-size:var(--fs-tiny);color:var(--text3);
+  margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;
+}
+.birth-picker .field select{
+  background:none;border:none;color:var(--text);
+  font-size:var(--fs-h1);font-weight:700;
+  text-align:center;width:100%;
+  outline:none;cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+}
+.birth-picker .field select option{background:var(--surface);color:var(--text)}
+.btn-primary{
+  background:var(--accent);color:#0d0d0d;
+  border:none;border-radius:14px;
+  padding:16px 48px;
+  font-size:var(--fs-body);font-weight:700;
+  cursor:pointer;transition:transform .2s,opacity .2s;
+  letter-spacing:.3px;
+}
+.btn-primary:hover{transform:scale(1.02)}
+.btn-primary:active{transform:scale(.98);opacity:.8}
+.btn-primary:disabled{opacity:.3;cursor:default;transform:none}
+/* ========== HOME ========== */
+.roll-item{
+  display:flex;align-items:center;gap:16px;
+  padding:16px 12px;
+  background:var(--surface);
+  border-radius:var(--radius);
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:background .2s,transform .15s;
+  border:1px solid var(--border);
+}
+.roll-item:hover{background:var(--surface2)}
+.roll-item:active{transform:scale(.98)}
+.roll-item .mini-strip{
+  width:48px;height:48px;border-radius:6px;
+  background:var(--surface3);
+  flex-shrink:0;
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.roll-item .mini-strip::before,
+.roll-item .mini-strip::after{
+  content:'';position:absolute;
+  width:4px;height:4px;border-radius:50%;
+  background:var(--sprocket);
+}
+.roll-item .mini-strip::before{left:5px}
+.roll-item .mini-strip::after{right:5px}
+/* sprocket rows for mini strip */
+.mini-sprockets{
+  position:absolute;left:0;right:0;
+  display:flex;flex-direction:column;justify-content:space-around;
+  height:100%;padding:4px 0;
+  pointer-events:none;
+}
+.mini-sprockets .dot{
+  width:3px;height:3px;border-radius:50%;background:var(--sprocket);
+  margin:0 auto;
+}
+.roll-item .mini-strip .fill-indicator{
+  font-size:var(--fs-tiny);color:var(--text2);
+  font-weight:500;
+}
+.roll-item .year-info{flex:1}
+.roll-item .year-info .year{
+  font-size:var(--fs-h1);font-weight:700;
+  letter-spacing:-.5px;
+}
+.roll-item .year-info .count{
+  font-size:var(--fs-caption);color:var(--text2);
+  margin-top:2px;
+}
+.roll-item .density{
+  width:3px;height:32px;border-radius:4px;
+  background:var(--surface3);flex-shrink:0;
+  align-self:center;
+  position:relative;overflow:hidden;
+}
+.roll-item .density .fill{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--accent);border-radius:4px;
+  transition:height .5s ease;
+}
+
+/* bottom tab bar */
+.tab-bar{
+  height:50px;
+  padding-bottom:var(--safe-bottom);
+  display:flex;align-items:center;flex-shrink:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  z-index:50;
+}
+.tab-bar button{
+  flex:1;height:100%;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  background:none;border:none;
+  color:var(--text3);font-size:var(--fs-caption);font-weight:500;
+  cursor:pointer;transition:color .2s;font-family:inherit;
+}
+.tab-bar button.active{color:var(--accent)}
+.tab-bar button:hover{color:var(--text2)}
+
+/* home ring overview */
+.home-ring-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 0 40px;
+}
+.home-ring-wrap .ring-row{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;padding:0 20px;margin-bottom:12px;
+  cursor:pointer;transition:background .2s;
+  border-radius:12px;
+}
+.home-ring-wrap .ring-row:hover{background:var(--surface)}
+.home-ring-wrap .ring-row .ring-mini{flex-shrink:0}
+.home-ring-wrap .ring-row .ring-label{flex:1;margin-left:16px}
+.home-ring-wrap .ring-row .ring-label .y{font-size:var(--fs-body);font-weight:600}
+.home-ring-wrap .ring-row .ring-label .c{font-size:var(--fs-tiny);color:var(--text2)}
+/* ========== REEL VIEW ========== */
+#reel-content{padding:0 12px}
+.reel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 16px;flex-shrink:0;
+}
+.frame-list{padding-bottom:20px}
+.frame-item{
+  position:relative;
+  margin:0 auto;margin-bottom:20px;
+  width:calc(100% - 24px);max-width:320px;
+  background:var(--surface);
+  border-radius:6px;
+  cursor:pointer;
+  transition:transform .15s,box-shadow .2s;
+  overflow:hidden;
+}
+.frame-item:active{transform:scale(.98)}
+.frame-item .sprockets{
+  position:absolute;top:0;bottom:0;
+  width:10px;
+  display:flex;flex-direction:column;justify-content:space-around;
+  padding:10px 0;
+  pointer-events:none;
+}
+.frame-item .sprockets.left{left:-2px}
+.frame-item .sprockets.right{right:-2px}
+.frame-item .sprockets .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--sprocket);
+  margin:0 auto;
+  transition:background .3s;
+}
+.frame-item .sprockets .dot.highlight{background:var(--accent)}
+.frame-item .frame-content{
+  position:relative;
+  aspect-ratio:1/1;
+  background:var(--surface3);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.frame-item .frame-content .grain{
+  position:absolute;inset:0;
+  opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:128px 128px;
+  pointer-events:none;
+}
+.frame-item .frame-content .empty-label{
+  font-size:var(--fs-caption);color:var(--text3);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.frame-item .frame-content .empty-label svg{opacity:.4}
+.frame-item .frame-content img{
+  width:100%;height:100%;object-fit:cover;
+}
+.frame-item .frame-meta{
+  padding:8px 14px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.frame-item .frame-meta .date{
+  font-size:var(--fs-tiny);color:var(--text3);
+  font-weight:500;text-transform:uppercase;letter-spacing:.5px;
+}
+.frame-item .frame-meta .note{
+  font-size:var(--fs-caption);color:var(--text2);
+  max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.frame-item .frame-border{
+  position:absolute;inset:0;
+  border:2px solid var(--border);
+  border-radius:6px;
+  pointer-events:none;
+  transition:border-color .3s;
+}
+.frame-item .frame-border.focus-active{border-color:var(--accent)}
+/* ========== RING VIEW ========== */
+#ring-content{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.ring-container{position:relative;margin:20px 0}
+.ring-container svg{display:block}
+.ring-label{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.ring-label .year-num{font-size:var(--fs-h1);font-weight:700;color:var(--text)}
+.ring-label .fill-count{font-size:var(--fs-caption);color:var(--text2);margin-top:2px}
+.ring-legend{
+  display:flex;gap:20px;margin-top:24px;
+  font-size:var(--fs-caption);color:var(--text2);
+}
+.ring-legend .dot{
+  display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;
+}
+.ring-legend .dot.filled{background:var(--accent)}
+.ring-legend .dot.blank{background:var(--surface3);border:1px solid var(--border)}
+/* ========== SETTINGS ========== */
+.settings-group{
+  background:var(--surface);border-radius:var(--radius);
+  margin-bottom:12px;overflow:hidden;
+  border:1px solid var(--border);
+}
+.settings-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  font-size:var(--fs-body);
+  cursor:pointer;
+  transition:background .2s;
+}
+.settings-item:last-child{border-bottom:none}
+.settings-item:hover{background:var(--surface2)}
+.settings-item .label{display:flex;align-items:center;gap:10px}
+.settings-item .label svg{opacity:.5}
+.settings-item .value{font-size:var(--fs-caption);color:var(--text2)}
+.settings-item .chevron{color:var(--text3);font-size:14px}
+.toggle{
+  width:44px;height:26px;border-radius:13px;
+  background:var(--surface3);position:relative;
+  cursor:pointer;transition:background .3s;
+  flex-shrink:0;
+}
+.toggle.active{background:var(--accent)}
+.toggle .knob{
+  position:absolute;top:3px;left:3px;
+  width:20px;height:20px;border-radius:50%;
+  background:#fff;
+  transition:transform .3s ease-out;
+}
+.toggle.active .knob{transform:translateX(18px)}
+.settings-danger{
+  color:var(--danger);font-weight:500;
+}
+/* ========== MODAL ========== */
+.modal-overlay{
+  position:absolute;inset:0;z-index:200;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease;
+}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal-sheet{
+  background:var(--surface);
+  border-radius:20px 20px 0 0;
+  width:100%;max-height:80%;
+  padding:24px 20px;
+  padding-bottom:calc(var(--safe-bottom) + 16px);
+  transform:translateY(100%);
+  transition:transform .4s cubic-bezier(.22,1,.36,1);
+  overflow-y:auto;
+}
+.modal-overlay.active .modal-sheet{transform:translateY(0)}
+.modal-handle{
+  width:36px;height:4px;border-radius:2px;
+  background:var(--surface3);margin:0 auto 20px;
+}
+.modal-title{font-size:var(--fs-h2);font-weight:700;margin-bottom:20px;text-align:center}
+.modal-photo-area{
+  width:100%;aspect-ratio:1/1;
+  background:var(--surface2);border-radius:12px;
+  border:1px dashed var(--border);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px;
+  cursor:pointer;margin-bottom:16px;
+  transition:border-color .2s,background .2s;
+  overflow:hidden;
+  position:relative;
+}
+.modal-photo-area:hover{border-color:var(--accent);background:var(--surface3)}
+.modal-photo-area.has-photo{border-style:solid;border-color:var(--border)}
+.modal-photo-area.has-photo:hover{border-color:var(--accent)}
+.modal-photo-area img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.modal-photo-area .placeholder-text{color:var(--text3);font-size:var(--fs-caption);display:flex;flex-direction:column;align-items:center;gap:6px}
+.modal-photo-area .placeholder-text svg{opacity:.4}
+.modal-note{
+  width:100%;padding:14px 16px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;
+  font-size:var(--fs-body);color:var(--text);
+  outline:none;resize:none;
+  font-family:inherit;
+  transition:border-color .2s;
+  margin-bottom:12px;
+}
+.modal-note:focus{border-color:var(--accent)}
+.modal-note::placeholder{color:var(--text3)}
+.char-count{text-align:right;font-size:var(--fs-tiny);color:var(--text3);margin-bottom:16px;margin-top:-8px}
+.modal-actions{display:flex;gap:12px}
+.modal-actions .btn-secondary{
+  flex:1;padding:14px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;color:var(--text2);
+  font-size:var(--fs-body);font-weight:600;cursor:pointer;
+  transition:background .2s;
+}
+.modal-actions .btn-secondary:hover{background:var(--surface3)}
+.modal-actions .btn-secondary.danger{color:var(--danger)}
+.modal-actions .btn-primary-action{
+  flex:1;padding:14px;
+  background:var(--accent);color:#0d0d0d;
+  border:none;border-radius:12px;
+  font-size:var(--fs-body);font-weight:700;cursor:pointer;
+  transition:opacity .2s;
+}
+.modal-actions .btn-primary-action:hover{opacity:.9}
+/* toast */
+.toast{
+  position:absolute;bottom:100px;left:50%;transform:translateX(-50%);
+  background:var(--surface2);color:var(--text);
+  padding:12px 24px;border-radius:12px;
+  font-size:var(--fs-caption);
+  border:1px solid var(--border);
+  opacity:0;transition:opacity .3s;z-index:300;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.toast.show{opacity:1}
+/* ========== TRANSITION OVERRIDES ========== */
+.slide-enter{animation:slideIn .35s ease both}
+.slide-exit{animation:slideOut .3s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-30px)}}
+/* responsive */
+@media(max-width:420px){
+  #phone{width:100%;height:100vh;margin:0;border-radius:0}
+}
+</style>
+</head>
+<body>
+<div id="phone">
+  <div id="notch"></div>
+  <div id="status-bar">
+    <span class="time">9:41</span>
+    <span class="icons">📶 📶 🔋</span>
+  </div>
+
+  <!-- ===== ONBOARDING ===== -->
+  <div class="screen active" id="screen-onboarding">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;text-align:center">
+      <div style="margin-bottom:12px;font-size:48px;filter:sepia(.4)">🎞️</div>
+      <div class="logo">FilmYears</div>
+      <div class="tagline">
+        <span>每一年的时光，都是一卷胶卷</span>
+        <span style="font-size:var(--fs-caption);margin-top:8px;color:var(--text3)">Each year is a roll of film, every day one frame.</span>
+      </div>
+
+      <div style="font-size:var(--fs-caption);color:var(--text2);margin-bottom:16px;font-weight:500">你的出生日期是？</div>
+      <div class="birth-picker">
+        <div class="field">
+          <label>年</label>
+          <select id="birth-year">
+            <script>for(let y=2026;y>=1920;y--)document.write(`<option value="${y}">${y}</option>`)</script>
+          </select>
+        </div>
+        <div class="field">
+          <label>月</label>
+          <select id="birth-month">
+            <script>for(let m=1;m<=12;m++)document.write(`<option value="${m}">${String(m).padStart(2,'0')}</option>`)</script>
+          </select>
+        </div>
+        <div class="field">
+          <label>日</label>
+          <select id="birth-day">
+            <script>for(let d=1;d<=31;d++)document.write(`<option value="${d}">${String(d).padStart(2,'0')}</option>`)</script>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-start" disabled>开始我的胶片年轮</button>
+      <div style="margin-top:20px;font-size:var(--fs-tiny);color:var(--text3);max-width:280px;line-height:1.5">
+        只回望你已经活过的时光 · 不渲染未来
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HOME ===== -->
+  <div class="screen" id="screen-home">
+    <div class="nav">
+      <div class="left">
+        <span style="font-size:20px;filter:sepia(.4)">🎞️</span>
+        <span class="nav-title">FilmYears</span>
+      </div>
+      <div class="right">
+        <button class="nav-btn" id="btn-settings" aria-label="设置">⚙️</button>
+      </div>
+    </div>
+    <div class="content" id="home-content" style="padding-bottom:60px"></div>
+    <div class="tab-bar" id="home-tabbar">
+      <button class="active" data-view="list">🎞️ 胶卷列表</button>
+      <button data-view="ring">◎ 年轮总览</button>
+    </div>
+  </div>
+
+  <!-- ===== REEL VIEW ===== -->
+  <div class="screen" id="screen-reel">
+    <div class="nav">
+      <div class="left">
+        <button class="nav-btn" id="btn-reel-back">← 返回</button>
+        <span class="nav-title" id="reel-year-label">2026</span>
+      </div>
+      <div class="right">
+        <button class="nav-btn" id="btn-to-ring">🪵 年轮</button>
+      </div>
+    </div>
+    <div class="content" id="reel-content"></div>
+  </div>
+
+  <!-- ===== RING VIEW ===== -->
+  <div class="screen" id="screen-ring">
+    <div class="nav">
+      <div class="left">
+        <button class="nav-btn" id="btn-ring-back">← 返回</button>
+        <span class="nav-title" id="ring-year-label">2026 年轮</span>
+      </div>
+      <div class="right">
+        <button class="nav-btn" id="btn-ring-export">⬇︎ 导出</button>
+      </div>
+    </div>
+    <div class="content" id="ring-content"></div>
+  </div>
+
+  <!-- ===== SETTINGS ===== -->
+  <div class="screen" id="screen-settings">
+    <div class="nav">
+      <div class="left">
+        <button class="nav-btn" id="btn-settings-back">← 返回</button>
+        <span class="nav-title">设置</span>
+      </div>
+    </div>
+    <div class="content" style="padding-top:4px">
+      <div class="settings-group">
+        <div class="settings-item">
+          <span class="label">☁️ iCloud 同步</span>
+          <div class="toggle active" id="toggle-icloud"><div class="knob"></div></div>
+        </div>
+        <div class="settings-item">
+          <span class="label">🌙 深色模式</span>
+          <div class="toggle active" id="toggle-dark"><div class="knob"></div></div>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="settings-item">
+          <span class="label">🔓 购买解锁全部功能</span>
+          <span class="value">$8.99</span>
+        </div>
+        <div class="settings-item">
+          <span class="label">🔄 恢复购买</span>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="settings-item" id="btn-clear-data">
+          <span class="label settings-danger">🗑 清除所有数据</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="settings-item"><span class="label">📄 隐私政策</span><span class="chevron">›</span></div>
+      </div>
+      <div style="text-align:center;padding:20px;font-size:var(--fs-tiny);color:var(--text3)">
+        FilmYears v1.0 · MVP
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EDIT MODAL ===== -->
+  <div class="modal-overlay" id="modal-edit">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">编辑今日胶片帧</div>
+      <div class="modal-photo-area" id="modal-photo-area">
+        <img id="modal-photo-preview" style="display:none" alt="photo">
+        <div class="placeholder-text" id="modal-photo-placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          点击添加照片
+        </div>
+      </div>
+      <textarea class="modal-note" id="modal-note" placeholder="添加一行备注（最多 80 字符）" maxlength="80" rows="2"></textarea>
+      <div class="char-count"><span id="char-count-val">0</span>/80</div>
+      <div class="modal-actions">
+        <button class="btn-secondary danger" id="btn-delete-photo">删除照片</button>
+        <button class="btn-primary-action" id="btn-save-frame">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CLEAR CONFIRM MODAL ===== -->
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="modal-sheet" style="text-align:center">
+      <div class="modal-handle"></div>
+      <div class="modal-title">确认清除所有数据？</div>
+      <p style="font-size:var(--fs-body);color:var(--text2);margin-bottom:24px;line-height:1.5">
+        这将删除你的出生日期、全部胶卷、<br>所有照片和数据。此操作不可撤销。
+      </p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="btn-confirm-cancel">取消</button>
+        <button class="btn-primary-action" style="background:var(--danger);color:#fff" id="btn-confirm-ok">确认清除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- toast -->
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ======================== STATE ========================
+const STATE = {
+  birthDate: null,       // Date
+  rolls: [],            // { year, frames: [{date,photo,note,isFilled}] }
+  currentYear: null,
+  editingDate: null,
+};
+
+// ======================== SAMPLE PHOTOS ========================
+// Generate placeholder gradient as "photo"
+function samplePhoto(index) {
+  const hues = [35, 200, 320, 160, 50, 280, 10, 180, 60, 300];
+  const h = hues[index % hues.length];
+  return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='hsl(${h},40%25,35%25)'/%3E%3Cstop offset='100%25' stop-color='hsl(${h+30},50%25,20%25)'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23g)' width='400' height='400'/%3E%3Ctext x='200' y='210' text-anchor='middle' fill='rgba(255,255,255,.15)' font-size='40' font-weight='bold'%3E📸%3C/text%3E%3C/svg%3E")`;
+}
+
+// Sample notes
+const SAMPLE_NOTES = [
+  '秋天的第一杯咖啡 ☕️', '下班路上的晚霞', '周末徒步遇到的小猫',
+  '生日蛋糕 🎂', '第一次做烘焙', '海边的日落',
+  '新买的花开了', '下雨天窝在家看书', '和老友重逢',
+  '晨跑记录', '小区的银杏黄了', '自己做了一桌菜',
+  '看了一场好电影 🎬', '收到远方寄来的明信片', '换季整理衣橱',
+  '第一次去这家店', '加班夜的空荡办公室', '春天第一次野餐',
+  '圣诞市场逛了一圈', '新年第一天',
+];
+
+// ======================== NAVIGATION ========================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active','prev');
+    if(s.id === id) s.classList.add('active');
+    else s.classList.add('prev');
+  });
+}
+
+function navigateTo(screenId) {
+  // trigger screen transition
+  const current = document.querySelector('.screen.active');
+  if(current) current.classList.remove('active');
+  showScreen(screenId);
+}
+
+// ======================== ONBOARDING ========================
+const birthYearEl = document.getElementById('birth-year');
+const birthMonthEl = document.getElementById('birth-month');
+const birthDayEl = document.getElementById('birth-day');
+const btnStart = document.getElementById('btn-start');
+
+function validateBirthDate() {
+  const y = parseInt(birthYearEl.value);
+  const m = parseInt(birthMonthEl.value);
+  const d = parseInt(birthDayEl.value);
+  const date = new Date(y, m-1, d);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const valid = date < today && date.getFullYear() === y && date.getMonth() === m-1 && date.getDate() === d;
+  btnStart.disabled = !valid;
+  return valid ? date : null;
+}
+
+[birthYearEl, birthMonthEl, birthDayEl].forEach(el => {
+  el.addEventListener('change', validateBirthDate);
+});
+
+function initApp(birthDate) {
+  STATE.birthDate = birthDate;
+  const birthYear = birthDate.getFullYear();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+
+  STATE.rolls = [];
+  for(let y = birthYear; y <= currentYear; y++) {
+    const startMonth = (y === birthYear) ? birthDate.getMonth() : 0;
+    const startDay = (y === birthYear) ? birthDate.getDate() : 1;
+    const endDate = (y === currentYear) ? now : new Date(y, 11, 31);
+    const endDay = (y === currentYear) ? now.getDate() : 31;
+    const endMonth = (y === currentYear) ? now.getMonth() : 11;
+
+    const frames = [];
+    const d = new Date(y, startMonth, startDay);
+    const end = new Date(y, endMonth, endDay);
+    while(d <= end) {
+      const key = `${y}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      // randomly fill some frames for demo
+      const shouldFill = Math.random() < 0.35 && frames.length < 45;
+      frames.push({
+        date: new Date(d),
+        key,
+        photo: shouldFill ? samplePhoto(frames.length) : null,
+        note: shouldFill ? SAMPLE_NOTES[frames.length % SAMPLE_NOTES.length] : null,
+        isFilled: shouldFill,
+      });
+      d.setDate(d.getDate() + 1);
+    }
+    STATE.rolls.push({ year: y, frames });
+  }
+
+  STATE.currentYear = currentYear;
+  renderHome();
+  navigateTo('screen-home');
+}
+
+btnStart.addEventListener('click', () => {
+  const d = validateBirthDate();
+  if(d) initApp(d);
+});
+
+// ======================== HOME VIEW STATE ========================
+let homeViewMode = 'list';
+
+// ======================== TAB BAR ========================
+document.getElementById('home-tabbar').addEventListener('click', function(e) {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const view = btn.dataset.view;
+  if (view === homeViewMode) return;
+  homeViewMode = view;
+  this.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHome();
+});
+
+// ======================== RENDER HOME ========================
+function renderHome() {
+  const container = document.getElementById('home-content');
+  container.innerHTML = '';
+  if (homeViewMode === 'ring') {
+    renderHomeRingOverview(container);
+    return;
+  }
+  // list mode
+  container.innerHTML = '<div style="font-size:var(--fs-caption);color:var(--text2);padding:8px 4px 16px;font-weight:500">你的胶片年轮</div>';
+  const now = new Date();
+  const sorted = [...STATE.rolls].reverse();
+  sorted.forEach((roll, idx) => {
+    const total = roll.frames.length;
+    const filled = roll.frames.filter(f => f.isFilled).length;
+    const pct = total > 0 ? (filled / total) * 100 : 0;
+    const isCurrentYear = roll.year === now.getFullYear();
+    
+    const item = document.createElement('div');
+    item.className = 'roll-item';
+    item.innerHTML = `
+      <div class="mini-strip">
+        <div class="mini-sprockets">${Array.from({length:5},()=>'<div class="dot"></div>').join('')}</div>
+        <span class="fill-indicator">${filled}</span>
+      </div>
+      <div class="year-info">
+        <div class="year">${roll.year}${isCurrentYear ? ' · 今年' : ''}</div>
+        <div class="count">${filled}/${total} 帧已填充</div>
+      </div>
+      <div class="density"><div class="fill" style="height:${pct}%"></div></div>
+    `;
+    item.addEventListener('click', () => openReel(roll.year));
+    container.appendChild(item);
+  });
+}
+
+function renderHomeRingOverview(container) {
+  const now = new Date();
+  const sorted = [...STATE.rolls].reverse();
+  const size = 220;
+  const gap = 28;
+  const maxR = Math.min(size/2 - 10, 40 + sorted.length * gap);
+  
+  container.innerHTML = '<div style="font-size:var(--fs-caption);color:var(--text2);padding:8px 4px 16px;font-weight:500">全部胶卷 · 年轮总览</div>';
+  
+  // SVG overview
+  const svgWrap = document.createElement('div');
+  svgWrap.style.cssText = 'text-align:center;padding:20px 0';
+  
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 '+size+' '+size);
+  svg.setAttribute('width', size);
+  svg.setAttribute('height', size);
+  svg.style.transform = 'rotate(-90deg)';
+  
+  sorted.forEach((roll, idx) => {
+    const r = 30 + (sorted.length - 1 - idx) * gap;
+    const total = roll.frames.length;
+    const filled = roll.frames.filter(f => f.isFilled).length;
+    const circum = 2 * Math.PI * r;
+    const segLen = circum / total;
+    
+    roll.frames.forEach((f, fi) => {
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', size/2);
+      circle.setAttribute('cy', size/2);
+      circle.setAttribute('r', r);
+      circle.setAttribute('fill', 'none');
+      circle.setAttribute('stroke', f.isFilled ? 'var(--accent)' : 'var(--surface3)');
+      circle.setAttribute('stroke-width', gap - 4);
+      circle.setAttribute('stroke-dasharray', (segLen * 0.85) + ' ' + circum);
+      circle.setAttribute('stroke-dashoffset', -fi * segLen);
+      const pct = (filled/total)*100;
+      circle.style.opacity = f.isFilled ? 0.5 + (pct/100)*0.5 : 0.3;
+      circle.style.cursor = 'pointer';
+      circle.addEventListener('click', () => openReel(roll.year));
+      svg.appendChild(circle);
+    });
+  });
+  
+  svgWrap.appendChild(svg);
+  container.appendChild(svgWrap);
+  
+  // Legend and per-year rows
+  const legend = document.createElement('div');
+  legend.style.cssText = 'display:flex;gap:20px;justify-content:center;padding:12px 0;font-size:var(--fs-caption);color:var(--text2)';
+  legend.innerHTML = '<span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:middle"></span>已填充</span><span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--surface3);margin-right:6px;vertical-align:middle;border:1px solid var(--border)"></span>空白</span>';
+  container.appendChild(legend);
+  
+  // per-year mini rows
+  sorted.forEach((roll, idx) => {
+    const total = roll.frames.length;
+    const filled = roll.frames.filter(f => f.isFilled).length;
+    const pct = total > 0 ? (filled/total)*100 : 0;
+    
+    const row = document.createElement('div');
+    row.className = 'ring-row';
+    
+    // mini ring indicator
+    const miniSize = 40;
+    const miniSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    miniSvg.setAttribute('viewBox', '0 0 '+miniSize+' '+miniSize);
+    miniSvg.setAttribute('width', miniSize);
+    miniSvg.setAttribute('height', miniSize);
+    miniSvg.style.transform = 'rotate(-90deg)';
+    miniSvg.style.flexShrink = '0';
+    
+    const mr = (miniSize/2) - 6;
+    const mCirc = 2 * Math.PI * mr;
+    const segL = mCirc / roll.frames.length;
+    roll.frames.forEach((f, fi) => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', miniSize/2); c.setAttribute('cy', miniSize/2);
+      c.setAttribute('r', mr);
+      c.setAttribute('fill', 'none');
+      c.setAttribute('stroke', f.isFilled ? 'var(--accent)' : 'var(--surface3)');
+      c.setAttribute('stroke-width', 4);
+      c.setAttribute('stroke-dasharray', (segL*0.7)+' '+mCirc);
+      c.setAttribute('stroke-dashoffset', -fi*segL);
+      miniSvg.appendChild(c);
+    });
+    
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'ring-label';
+    labelDiv.innerHTML = '<div class="y">'+roll.year+'</div><div class="c">'+filled+'/'+total+' 帧</div>';
+    
+    row.appendChild(miniSvg);
+    row.appendChild(labelDiv);
+    row.addEventListener('click', () => openReel(roll.year));
+    container.appendChild(row);
+  });
+}
+
+// ======================== REEL VIEW ========================
+function openReel(year) {
+  STATE.currentYear = year;
+  document.getElementById('reel-year-label').textContent = `${year} 年`;
+  renderReel();
+  navigateTo('screen-reel');
+}
+
+function renderReel() {
+  const container = document.getElementById('reel-content');
+  const roll = STATE.rolls.find(r => r.year === STATE.currentYear);
+  if(!roll) return;
+
+  container.innerHTML = `
+    <div class="reel-header">
+      <span style="font-size:var(--fs-caption);color:var(--text2)">${roll.frames.length} 帧 · ${roll.frames.filter(f=>f.isFilled).length} 帧已填充</span>
+    </div>
+    <div class="frame-list"></div>
+  `;
+  const list = container.querySelector('.frame-list');
+
+  roll.frames.forEach((frame, idx) => {
+    const div = document.createElement('div');
+    div.className = 'frame-item';
+    
+    const month = String(frame.date.getMonth()+1).padStart(2,'0');
+    const day = String(frame.date.getDate()).padStart(2,'0');
+    const dateStr = `${STATE.currentYear}.${month}.${day}`;
+    const dayOfWeek = ['日','一','二','三','四','五','六'][frame.date.getDay()];
+
+    div.innerHTML = `
+      <div class="sprockets left">
+        ${Array.from({length:6}, (_,i)=>`<div class="dot ${i===1||i===4?'highlight':''}"></div>`).join('')}
+      </div>
+      <div class="frame-content">
+        <div class="grain"></div>
+        ${frame.isFilled 
+          ? `<img src="${frame.photo}" alt="frame" style="background:var(--surface3)" onerror="this.style.display='none'">`
+          : `<div class="empty-label">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+              空白底片
+             </div>`
+        }
+        <div class="frame-border${idx===2?' focus-active':''}"></div>
+      </div>
+      <div class="frame-meta">
+        <span class="date">${month}/${day} 周${dayOfWeek}</span>
+        <span class="note">${frame.note || ''}</span>
+      </div>
+    `;
+    div.addEventListener('click', () => openEditFrame(frame));
+    list.appendChild(div);
+  });
+}
+
+// ======================== RING VIEW ========================
+function renderRing(year) {
+  const container = document.getElementById('ring-content');
+  const roll = STATE.rolls.find(r => r.year === year);
+  if(!roll) return;
+
+  document.getElementById('ring-year-label').textContent = `${year} 年轮`;
+  
+  const total = roll.frames.length;
+  const filled = roll.frames.filter(f => f.isFilled).length;
+  const size = 280;
+  const cx = size/2, cy = size/2, r = 110, stroke = 18;
+  const circumference = 2 * Math.PI * r;
+  const segment = circumference / total;
+
+  let accumulated = 0;
+  let segments = '';
+  roll.frames.forEach((f, i) => {
+    const len = segment;
+    const color = f.isFilled ? '#c8963e' : '#2a2a2a';
+    segments += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+      stroke-dasharray="${len} ${circumference - len}"
+      stroke-dashoffset="${-accumulated}"
+      transform="rotate(-90,${cx},${cy})"
+      style="cursor:pointer;transition:stroke .2s"
+      data-index="${i}" />`;
+    accumulated += len;
+  });
+
+  container.innerHTML = `
+    <div style="font-size:var(--fs-caption);color:var(--text2);margin-bottom:4px">${year} 年 · ${filled}/${total} 帧</div>
+    <div class="ring-container">
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform:rotate(90deg)">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#1a1a1a" stroke-width="${stroke+4}"/>
+        ${segments}
+        <circle cx="${cx}" cy="${cy}" r="${r-8}" fill="none" stroke="var(--border)" stroke-width=".5"/>
+      </svg>
+      <div class="ring-label">
+        <div class="year-num">${year}</div>
+        <div class="fill-count">${filled} 帧回忆</div>
+      </div>
+    </div>
+    <div class="ring-legend">
+      <span><span class="dot filled"></span>已填充</span>
+      <span><span class="dot blank"></span>空白</span>
+    </div>
+    <div style="margin-top:16px;font-size:var(--fs-tiny);color:var(--text3)">
+      点击色块跳转至对应日期
+    </div>
+  `;
+
+  // click on segments to jump to reel
+  container.querySelectorAll('circle[data-index]').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = parseInt(el.dataset.index);
+      const frame = roll.frames[idx];
+      if(frame) {
+        STATE.currentYear = year;
+        renderReel();
+        navigateTo('screen-reel');
+        setTimeout(() => {
+          const items = document.querySelectorAll('.frame-item');
+          if(items[idx]) items[idx].scrollIntoView({behavior:'smooth',block:'center'});
+        }, 400);
+      }
+    });
+  });
+}
+
+// ======================== EDIT MODAL ========================
+function openEditFrame(frame) {
+  STATE.editingDate = frame.date;
+  const modal = document.getElementById('modal-edit');
+  const preview = document.getElementById('modal-photo-preview');
+  const placeholder = document.getElementById('modal-photo-placeholder');
+  const note = document.getElementById('modal-note');
+  const count = document.getElementById('char-count-val');
+  const area = document.getElementById('modal-photo-area');
+
+  if(frame.isFilled && frame.photo) {
+    preview.src = frame.photo;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+    area.classList.add('has-photo');
+  } else {
+    preview.style.display = 'none';
+    placeholder.style.display = 'flex';
+    area.classList.remove('has-photo');
+  }
+  note.value = frame.note || '';
+  count.textContent = note.value.length;
+
+  // update title to show date
+  const m = String(frame.date.getMonth()+1).padStart(2,'0');
+  const d = String(frame.date.getDate()).padStart(2,'0');
+  modal.querySelector('.modal-title').textContent = `${STATE.currentYear}.${m}.${d}`;
+
+  modal.classList.add('active');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// Modal photo click — simulate adding a photo
+document.getElementById('modal-photo-area').addEventListener('click', function() {
+  const idx = Math.floor(Math.random() * 10);
+  this.querySelector('img').src = samplePhoto(idx + STATE.rolls.length);
+  this.querySelector('img').style.display = 'block';
+  this.querySelector('.placeholder-text').style.display = 'none';
+  this.classList.add('has-photo');
+});
+
+// Note char count
+document.getElementById('modal-note').addEventListener('input', function() {
+  document.getElementById('char-count-val').textContent = this.value.length;
+});
+
+// Save frame
+document.getElementById('btn-save-frame').addEventListener('click', function() {
+  const modal = document.getElementById('modal-edit');
+  const preview = document.getElementById('modal-photo-preview');
+  const note = document.getElementById('modal-note');
+  const hasPhoto = preview.style.display === 'block';
+  
+  // Find and update frame data
+  for(const roll of STATE.rolls) {
+    for(const frame of roll.frames) {
+      if(frame.date.getTime() === STATE.editingDate.getTime()) {
+        frame.isFilled = hasPhoto;
+        frame.note = note.value || null;
+        if(hasPhoto && !frame.photo) frame.photo = preview.src;
+        break;
+      }
+    }
+  }
+  
+  modal.classList.remove('active');
+  showToast('已保存 ✨');
+  
+  // Refresh current view
+  if(document.getElementById('screen-reel').classList.contains('active')) {
+    renderReel();
+  } else {
+    renderHome();
+  }
+});
+
+// Delete photo
+document.getElementById('btn-delete-photo').addEventListener('click', function() {
+  const preview = document.getElementById('modal-photo-preview');
+  const placeholder = document.getElementById('modal-photo-placeholder');
+  preview.style.display = 'none';
+  placeholder.style.display = 'flex';
+  document.getElementById('modal-photo-area').classList.remove('has-photo');
+});
+
+// ======================== SETTINGS ========================
+document.getElementById('btn-settings').addEventListener('click', () => navigateTo('screen-settings'));
+document.getElementById('btn-settings-back').addEventListener('click', () => { renderHome(); navigateTo('screen-home'); });
+document.getElementById('btn-reel-back').addEventListener('click', () => { renderHome(); navigateTo('screen-home'); });
+document.getElementById('btn-ring-back').addEventListener('click', () => { renderReel(); navigateTo('screen-reel'); });
+document.getElementById('btn-to-ring').addEventListener('click', () => { renderRing(STATE.currentYear); navigateTo('screen-ring'); });
+
+// Toggles
+document.querySelectorAll('.toggle').forEach(t => {
+  t.addEventListener('click', function() { this.classList.toggle('active'); });
+});
+
+// Clear data
+document.getElementById('btn-clear-data').addEventListener('click', () => {
+  document.getElementById('modal-confirm').classList.add('active');
+});
+document.getElementById('btn-confirm-cancel').addEventListener('click', () => {
+  document.getElementById('modal-confirm').classList.remove('active');
+});
+document.getElementById('btn-confirm-ok').addEventListener('click', () => {
+  document.getElementById('modal-confirm').classList.remove('active');
+  STATE.birthDate = null;
+  STATE.rolls = [];
+  renderHome();
+  navigateTo('screen-onboarding');
+  showToast('已清除所有数据');
+});
+
+// Ring export
+document.getElementById('btn-ring-export').addEventListener('click', () => {
+  showToast('年轮图片已保存 📷');
+});
+
+// ======================== TOAST ========================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ======================== INIT ========================
+// Set default birth date to a sensible value
+birthYearEl.value = '1995';
+birthMonthEl.value = '6';
+birthDayEl.value = '15';
+validateBirthDate();
+
+// auto init with default for quick demo (skip onboarding after first load)
+// but keep onboarding visible initially for first experience
+</script>
+</body>
+</html>

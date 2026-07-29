@@ -1,0 +1,34 @@
+# Xcode
+*.xcworkspace
+xcuserdata/
+DerivedData/
+*.ipa
+*.dSYM.zip
+*.dSYM
+build/
+
+# macOS
+.DS_Store
+*.swp
+*.swo
+*~
+
+# CocoaPods
+Pods/
+
+# Swift Package Manager
+.build/
+Package.resolved
+
+# Design tool artifacts
+.kun-design/
+
+# IDE
+.idea/
+.vscode/
+*.xcuserstate
+
+# Environment
+.env
+.env.local
+.env.production
