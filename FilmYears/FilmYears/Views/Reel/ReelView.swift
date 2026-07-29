@@ -11,15 +11,15 @@ struct ReelView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 24) {
+            LazyVStack(spacing: 32) {
                 ForEach(sortedFrames) { frame in
                     FilmFrameCard(frame: frame, onUpdate: {
                         refreshID = UUID()
                     })
-                    .padding(.horizontal, Spacing.lg)
+                    .padding(.horizontal, 20)
                 }
             }
-            .padding(.vertical, Spacing.lg)
+            .padding(.vertical, Spacing.xl)
         }
         .id(refreshID)
         .background(Color.bgPrimary)
