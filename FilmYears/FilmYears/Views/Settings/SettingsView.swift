@@ -3,6 +3,7 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @Query private var settings: [AppSettings]
     @State private var showClearConfirm = false
     @State private var showClearSuccess = false
@@ -62,7 +63,25 @@ struct SettingsView: View {
                 ContentUnavailableView("加载中", systemImage: "gearshape")
             }
         }
-        .navigationTitle("设置")
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                    }
+                    .foregroundColor(.textSecondary)
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                Text("设置")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.textPrimary)
+            }
+        }
         .alert("清除所有数据", isPresented: $showClearConfirm) {
             Button("取消", role: .cancel) { }
             Button("确认清除", role: .destructive) {

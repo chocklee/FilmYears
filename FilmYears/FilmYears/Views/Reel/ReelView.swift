@@ -30,7 +30,6 @@ struct ReelView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("返回")
                     }
                     .foregroundColor(.textSecondary)
                 }
