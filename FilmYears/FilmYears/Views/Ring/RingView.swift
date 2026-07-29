@@ -19,6 +19,11 @@ struct RingView: View {
     var body: some View {
         VStack(spacing: 24) {
             if let roll = rolls.first {
+                Text("Ring Overview")
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundColor(.textPrimary)
+                    .padding(.top, 43)
+
                 Spacer()
 
                 RingChart(frames: roll.frames) { _ in
@@ -78,6 +83,7 @@ struct RingView: View {
                     if let roll = rolls.first { exportRing(roll: roll) }
                 } label: {
                     Image(systemName: "square.and.arrow.down")
+                        .foregroundColor(.textSecondary)
                 }
             }
         }
