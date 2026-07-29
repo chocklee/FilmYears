@@ -26,15 +26,14 @@ struct RingView: View {
 
                 Text("时间凝练成环，每一帧都是生活的见证。")
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.textSecondary)
-                    .padding(.top, 4)
-
-                Spacer()
+                    .foregroundColor(.textTertiary)
+                    .padding(.top, -16)
 
                 RingChart(frames: roll.frames) { _ in
                     dismiss()
                 }
                 .frame(width: 280, height: 280)
+                .padding(.top, 56)
 
                 Text("\(roll.frameCountFormatted) 天已填充")
                     .font(.caption)

@@ -4,7 +4,7 @@ struct RingChart: View {
     let frames: [FilmFrame]
     var onSelectDate: ((Date) -> Void)?
 
-    private let lineWidth: CGFloat = 18
+    private let lineWidth: CGFloat = 24
 
     var body: some View {
         GeometryReader { geo in
@@ -12,14 +12,17 @@ struct RingChart: View {
             let radius = min(geo.size.width, geo.size.height) / 2 - 20
             let total = max(frames.count, 1)
             let segmentAngle = 2 * .pi / Double(total)
+            let gap: Double = 0.5
+            let drawAngle = segmentAngle - gap
 
             ZStack {
                 ForEach(Array(frames.enumerated()), id: \.offset) { index, frame in
+                    let start = Double(index) * segmentAngle - .pi / 2
                     RingSegmentView(
                         center: center,
                         radius: radius,
-                        startAngle: Angle(radians: Double(index) * segmentAngle - .pi / 2),
-                        endAngle: Angle(radians: Double(index + 1) * segmentAngle - .pi / 2),
+                        startAngle: Angle(radians: start),
+                        endAngle: Angle(radians: start + drawAngle),
                         isFilled: frame.isFilled,
                         lineWidth: lineWidth
                     )
