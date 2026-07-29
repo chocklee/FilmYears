@@ -12,7 +12,7 @@ struct RingChart: View {
             let radius = min(geo.size.width, geo.size.height) / 2 - 20
             let total = max(frames.count, 1)
             let segmentAngle = 2 * .pi / Double(total)
-            let gap = segmentAngle * 0.15
+            let gap = total <= 2 ? 0 : segmentAngle * 0.15
             let drawAngle = segmentAngle - gap
 
             ZStack {
@@ -73,11 +73,12 @@ private struct CenterLabel: View {
     var body: some View {
         VStack(spacing: 4) {
             let year = Calendar.current.component(.year, from: frames.first?.date ?? .now)
-            Text("\(year)")
-                .font(.title2).fontWeight(.bold)
+            Text("\(year.formatted(.number.grouping(.never)))")
+                .font(.system(size: 48, weight: .bold))
+                .foregroundColor(Color.textPrimary)
             Text("\(frames.filter(\.isFilled).count) 帧回忆")
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(Color(hex: "#D3C4B2"))
         }
     }
 }

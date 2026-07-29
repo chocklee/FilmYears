@@ -36,11 +36,7 @@ struct RingView: View {
                 .frame(width: 300, height: 300)
                 .padding(.top, 56)
 
-                Text("\(roll.frameCountFormatted) 天已填充")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
-                HStack(spacing: 20) {
+                HStack(spacing: 16) {
                     Label("已填充", systemImage: "circle.fill")
                         .foregroundColor(.accentColor)
                         .font(.caption)
@@ -48,6 +44,7 @@ struct RingView: View {
                         .foregroundColor(.secondary)
                         .font(.caption)
                 }
+                .padding(.top, 48)
 
                 Button {
                     exportRing(roll: roll)
