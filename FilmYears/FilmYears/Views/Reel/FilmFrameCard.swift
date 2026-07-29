@@ -20,70 +20,23 @@ struct FilmFrameCard: View {
             VStack(spacing: 0) {
                 // Photo / empty area
                 ZStack {
-                    Rectangle()
-                        .fill(Color(.systemGray6))
-                        .aspectRatio(3 / 2, contentMode: .fit)
-
                     if frame.isFilled, let path = frame.photoPath {
                         FramePhoto(path: path)
                             .aspectRatio(contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(maxWidth: .infinity, maxHeight: 272)
                             .clipped()
                     } else {
                         ZStack {
-                            // Film negative base
-                            Rectangle()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(.systemGray6),
-                                            Color(.systemGray5).opacity(0.5),
-                                            Color(.systemGray6),
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-
-                            // Subtle film-edge markings
-                            VStack {
-                                HStack {
-                                    Text(frame.displayDate)
-                                        .font(.system(size: 7, design: .monospaced))
-                                        .foregroundColor(.secondary.opacity(0.5))
-                                        .padding(.leading, 4)
-                                    Spacer()
-                                    Text("\(frame.roll?.year ?? 0)")
-                                        .font(.system(size: 7, design: .monospaced))
-                                        .foregroundColor(.secondary.opacity(0.5))
-                                        .padding(.trailing, 4)
-                                }
-                                .padding(.top, 2)
-
-                                Spacer()
-
-                                // Inviting capture icon
-                                VStack(spacing: 6) {
-                                    Image(systemName: "camera.viewfinder")
-                                        .font(.title3)
-                                        .foregroundColor(.secondary.opacity(0.4))
-                                    Text("轻触记录")
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary.opacity(0.4))
-                                }
-
-                                Spacer()
-
-                                // Film frame number
-                                HStack {
-                                    Spacer()
-                                    Text("✦")
-                                        .font(.system(size: 6))
-                                        .foregroundColor(.secondary.opacity(0.3))
-                                        .padding(.trailing, 4)
-                                        .padding(.bottom, 2)
-                                }
+                            // Inviting capture icon
+                            VStack(spacing: 16) {
+                                Image("CaptureIcon")
+                                    .resizable()
+                                    .frame(width: 40, height: 36)
+                                Text("等待曝光")
+                                    .foregroundColor(.textTertiary)
+                                    .font(.system(size: 11, weight: .medium))
                             }
+                            .background(Color.clear)
                         }
                     }
 
@@ -96,19 +49,13 @@ struct FilmFrameCard: View {
                         screenTimeScore: frame.screenTimeScore
                     )
                 }
-                .overlay(
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(Color.white.opacity(0.05), style: StrokeStyle(
-                            lineWidth: 1,
-                            dash: frame.isFilled ? [] : [4]
-                        ))
-                )
+                .background(Color(hex: "131313").opacity(0.3))
 
                 // Bottom info bar (film edge marking style)
                 HStack {
                     Text(frame.displayDate)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.textPrimary)
                     Spacer()
                     if let note = frame.note, !note.isEmpty {
                         Text(note)
@@ -117,17 +64,22 @@ struct FilmFrameCard: View {
                             .foregroundColor(.primary)
                     }
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 8)
-                .background(Color(.systemBackground))
+                .frame(height: 57)
+                .padding(.horizontal, 16)
+                .background(Color.bgCard)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Color.white.opacity(0.05), style: StrokeStyle(
+                        lineWidth: 1,
+                        dash: frame.isFilled ? [] : [4]
+                    ))
+            )
 
             // Right sprocket holes
             SprocketHoles(highlighted: frame.focusActive ?? false, height: 343)
         }
         .frame(height: 343)
-        .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
         .onTapGesture { showEditor = true }
         .sheet(isPresented: $showEditor) {
             EditFrameSheet(frame: frame)
