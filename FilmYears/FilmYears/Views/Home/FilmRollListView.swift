@@ -22,12 +22,13 @@ struct FilmRollListView: View {
             .background(Color.bgPrimary)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    HStack(spacing: Spacing.sm) {
-                        Text("🎞️")
-                            .font(.system(size: 20))
+                ToolbarItem(placement: .topBarLeading) {
+                    HStack(spacing: 8) {
+                        Image("AppLogo")
+                            .resizable()
+                            .frame(width: 20, height: 16)
                         Text("FilmYears")
-                            .font(AppFont.h2)
+                            .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.textPrimary)
                     }
                 }
