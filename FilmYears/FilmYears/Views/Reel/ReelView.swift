@@ -17,7 +17,9 @@ struct ReelView: View {
                     ForEach(sortedFrames) { frame in
                         FilmFrameCard(frame: frame, onUpdate: { edited in
                             scrollTarget = edited
-                            refreshID = UUID()
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                refreshID = UUID()
+                            }
                         })
                         .padding(.horizontal, Spacing.xl)
                         .id(frame.id)
@@ -26,6 +28,7 @@ struct ReelView: View {
                 .padding(.vertical, Spacing.xl)
             }
             .id(refreshID)
+            .transition(.opacity)
             .onChange(of: refreshID) { _, _ in
                 if let target = scrollTarget {
                     withAnimation {
