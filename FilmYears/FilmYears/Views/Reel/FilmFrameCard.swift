@@ -27,7 +27,7 @@ struct FilmFrameCard: View {
                                 .foregroundColor(.textTertiary)
                                 .font(.system(size: 11, weight: .medium))
                         }
-                        .frame(height: 284)
+                        .frame(maxWidth: .infinity, maxHeight: 284)
                     }
                 }
                 .background(Color(hex: "#131313").opacity(0.3))

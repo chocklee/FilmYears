@@ -12,6 +12,7 @@ struct EditFrameSheet: View {
     @State private var hasPhoto: Bool = false
     @State private var originalNote: String = ""
     @State private var originalHasPhoto: Bool = false
+    @State private var originalPhotoData: Data? = nil
 
     private var previewImage: UIImage? {
         guard let data = photoData else { return nil }
@@ -19,7 +20,7 @@ struct EditFrameSheet: View {
     }
 
     private var hasChanges: Bool {
-        note != originalNote || hasPhoto != originalHasPhoto
+        note != originalNote || hasPhoto != originalHasPhoto || photoData != originalPhotoData
     }
 
     var body: some View {
@@ -48,7 +49,7 @@ struct EditFrameSheet: View {
                     if hasPhoto, let image = previewImage {
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(contentMode: .fit)
                             .frame(maxWidth: .infinity, maxHeight: 218)
                             .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -154,9 +155,11 @@ struct EditFrameSheet: View {
             originalNote = note
             originalHasPhoto = hasPhoto
             if hasPhoto, let path = frame.photoPath {
-                photoData = try? Data(contentsOf: PhotoManager.documentsDir
+                let data = try? Data(contentsOf: PhotoManager.documentsDir
                     .deletingLastPathComponent()
                     .appendingPathComponent(path))
+                photoData = data
+                originalPhotoData = data
             }
         }
     }
