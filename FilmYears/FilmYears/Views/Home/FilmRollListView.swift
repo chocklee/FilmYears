@@ -59,8 +59,8 @@ private struct RollRowView: View {
             // Year info
             VStack(alignment: .leading, spacing: 2) {
                 Text("\(roll.year)")
-                    .font(AppFont.h1)
-                    .foregroundColor(.textPrimary)
+                    .font(.system(size: 30, weight: .bold))
+                    .foregroundColor(Color(hex: "#F4BD61"))
 
                 Text("\(roll.filledCount)/\(roll.totalCount) 帧已填充")
                     .font(AppFont.caption)
@@ -80,7 +80,6 @@ private struct RollRowView: View {
                 }
         }
         .frame(height: 82)
-        .padding(.vertical, Spacing.lg)
         .padding(.trailing, Spacing.lg)
         .background(Color.bgCard)
         .clipShape(RoundedRectangle(cornerRadius: 8))
