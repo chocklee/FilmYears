@@ -55,9 +55,9 @@ struct EditFrameSheet: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     } else {
                         VStack(spacing: 8) {
-                            Image(systemName: "photo.badge.plus")
-                                .font(.title2)
-                                .foregroundColor(.textTertiary)
+                            Image("PhotoPlaceholder")
+                                .resizable()
+                                .frame(width: 33, height: 30)
                             Text("点击添加照片")
                                 .font(.system(size: 13))
                                 .foregroundColor(.textTertiary)
