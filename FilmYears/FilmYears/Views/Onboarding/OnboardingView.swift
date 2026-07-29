@@ -11,7 +11,6 @@ struct OnboardingView: View {
     @State private var errorMessage = ""
     let completion: () -> Void
 
-    private let now = Calendar.current.startOfDay(for: .now)
     private let currentYear = Calendar.current.component(.year, from: .now)
     private let currentMonth = Calendar.current.component(.month, from: .now)
     private let currentDay = Calendar.current.component(.day, from: .now)
@@ -32,13 +31,6 @@ struct OnboardingView: View {
             from: DateComponents(year: selectedYear, month: selectedMonth)
         ) ?? .now)?.count ?? 30
         return Array(1...maxDay)
-    }
-
-    private var isFutureDate: Bool {
-        guard let date = try? DateComponents(
-            year: selectedYear, month: selectedMonth, day: selectedDay
-        ).date else { return true }
-        return Calendar.current.startOfDay(for: date) > now
     }
 
     private var birthDate: Date {
@@ -96,16 +88,6 @@ struct OnboardingView: View {
                             selectedDay = days.last ?? 1
                         }
                     }
-
-                    if isFutureDate {
-                        HStack(spacing: 6) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(Color(red: 0.78, green: 0.59, blue: 0.24))
-                            Text("出生日期不能是未来日期")
-                                .font(.caption)
-                                .foregroundColor(.white.opacity(0.5))
-                        }
-                    }
                 }
                 .padding(.bottom, 48)
 
@@ -124,16 +106,16 @@ struct OnboardingView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
-                            (isFutureDate || isInitializing)
+                            isInitializing
                                 ? Color.white.opacity(0.15)
                                 : Color(red: 0.78, green: 0.59, blue: 0.24)
                         )
                         .foregroundColor(
-                            (isFutureDate || isInitializing) ? .white.opacity(0.3) : .black
+                            isInitializing ? .white.opacity(0.3) : .black
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
-                    .disabled(isInitializing || isFutureDate)
+                    .disabled(isInitializing)
 
                     Text("只回望你已经活过的时光 · 不渲染未来")
                         .font(.system(size: 11))
