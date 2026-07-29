@@ -104,7 +104,7 @@ struct EditFrameSheet: View {
             .padding(.bottom, 24)
 
             // Action buttons
-            HStack(spacing: 12) {
+            HStack(spacing: 16) {
                 Button(action: {
                     hasPhoto = false
                     photoData = nil
@@ -113,8 +113,7 @@ struct EditFrameSheet: View {
                     Text("删除照片")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(Color(hex: "#E74C3C"))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
+                        .frame(maxWidth: .infinity, minHeight: 52)
                         .background(Color(hex: "#131313"))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(
@@ -127,8 +126,7 @@ struct EditFrameSheet: View {
                     Text("保存")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.black)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
+                        .frame(maxWidth: .infinity, minHeight: 52)
                         .background(Color.accentGold)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
@@ -137,7 +135,7 @@ struct EditFrameSheet: View {
             .padding(.bottom, 32)
         }
         .frame(maxHeight: .infinity, alignment: .top)
-        .background(Color.bgPrimary)
+        .background(Color.bgCardStrong)
         .ignoresSafeArea(.all, edges: .bottom)
         .task {
             note = frame.note ?? ""
