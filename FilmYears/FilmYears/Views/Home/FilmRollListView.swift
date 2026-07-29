@@ -7,7 +7,7 @@ struct FilmRollListView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVStack(spacing: 0) {
+                LazyVStack(spacing: 29) {
                     ForEach(rolls) { roll in
                         NavigationLink {
                             ReelView(roll: roll)
@@ -15,15 +15,9 @@ struct FilmRollListView: View {
                             RollRowView(roll: roll)
                         }
                         .buttonStyle(.plain)
-
-                        if roll != rolls.last {
-                            Divider()
-                                .background(Color.borderStandard)
-                                .padding(.leading, 72)
-                        }
                     }
                 }
-                .padding(.top, Spacing.sm)
+                .padding(Spacing.xl)
             }
             .background(Color.bgPrimary)
             .navigationBarTitleDisplayMode(.inline)
@@ -50,7 +44,7 @@ struct FilmRollListView: View {
     }
 }
 
-// MARK: - Roll Row
+// MARK: - Roll Row (Card Style)
 private struct RollRowView: View {
     let roll: FilmRoll
 
@@ -62,7 +56,6 @@ private struct RollRowView: View {
                     .fill(Color.bgCard)
                     .frame(width: 52, height: 52)
 
-                // Sprocket holes
                 VStack(spacing: 4) {
                     ForEach(0 ..< 3) { _ in
                         HStack(spacing: 6) {
@@ -76,7 +69,6 @@ private struct RollRowView: View {
                     }
                 }
 
-                // Frame count in center
                 Text("\(roll.filledCount)")
                     .font(AppFont.caption.weight(.bold))
                     .foregroundColor(.textSecondary)
@@ -105,8 +97,12 @@ private struct RollRowView: View {
                         .frame(height: 40 * roll.fillRatio)
                 }
         }
-        .padding(.horizontal, Spacing.xl)
-        .padding(.vertical, Spacing.lg)
-        .background(Color.bgPrimary)
+        .padding(Spacing.lg)
+        .background(Color.bgCard)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+        )
     }
 }
