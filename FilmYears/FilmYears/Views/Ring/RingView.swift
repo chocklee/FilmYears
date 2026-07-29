@@ -29,10 +29,11 @@ struct RingView: View {
                     .foregroundColor(.textTertiary)
                     .padding(.top, -16)
 
-                RingChart(frames: roll.frames) { _ in
+                let sortedFrames = roll.frames.sorted { $0.date < $1.date }
+                RingChart(frames: sortedFrames) { _ in
                     dismiss()
                 }
-                .frame(width: 280, height: 280)
+                .frame(width: 300, height: 300)
                 .padding(.top, 56)
 
                 Text("\(roll.frameCountFormatted) 天已填充")
@@ -99,7 +100,8 @@ struct RingView: View {
     }
 
     private func exportRing(roll: FilmRoll) {
-        let chart = RingChart(frames: roll.frames)
+        let sorted = roll.frames.sorted { $0.date < $1.date }
+        let chart = RingChart(frames: sorted)
             .frame(width: 280, height: 280)
 
         let renderer = ImageRenderer(content: chart)
