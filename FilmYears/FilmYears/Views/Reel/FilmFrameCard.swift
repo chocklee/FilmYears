@@ -19,7 +19,7 @@ struct FilmFrameCard: View {
                         .aspectRatio(3 / 2, contentMode: .fit)
 
                     if frame.isFilled, let path = frame.photoPath {
-                        AsyncImage(path: path)
+                        FramePhoto(path: path)
                             .aspectRatio(contentMode: .fill)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .clipped()
@@ -77,14 +77,24 @@ struct FilmFrameCard: View {
 }
 
 // MARK: - Image loader from local path
-private struct AsyncImage: View {
+private struct FramePhoto: View {
     let path: String
 
     var body: some View {
-        Color(.systemGray4)
-            .overlay {
-                Image(systemName: "photo")
-                    .foregroundColor(.secondary)
-            }
+        let url = PhotoManager.documentsDir
+            .deletingLastPathComponent()
+            .appendingPathComponent(path)
+        if let data = try? Data(contentsOf: url),
+           let image = UIImage(data: data) {
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } else {
+            Color(.systemGray4)
+                .overlay {
+                    Image(systemName: "photo")
+                        .foregroundColor(.secondary)
+                }
+        }
     }
 }

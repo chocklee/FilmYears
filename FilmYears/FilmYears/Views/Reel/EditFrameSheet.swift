@@ -6,7 +6,13 @@ struct EditFrameSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var note: String = ""
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var photoData: Data?
     @State private var hasPhoto: Bool = false
+
+    private var previewImage: UIImage? {
+        guard let data = photoData else { return nil }
+        return UIImage(data: data)
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -31,28 +37,30 @@ struct EditFrameSheet: View {
                         )
                         .aspectRatio(4 / 3, contentMode: .fit)
 
-                    if hasPhoto {
-                        Color(.systemGray5)
-                            .overlay(
-                                Image(systemName: "photo.fill")
-                                    .font(.largeTitle)
-                                    .foregroundColor(.secondary)
-                            )
+                    if hasPhoto, let image = previewImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     } else {
                         VStack(spacing: 8) {
                             Image(systemName: "photo.badge.plus")
                                 .font(.title2)
                                 .foregroundColor(.secondary)
-                            Text("点击添加照片")
+                            Text(hasPhoto ? "点击更换照片" : "点击添加照片")
                                 .font(.caption)
                                 .foregroundStyle(.tertiary)
                         }
                     }
                 }
             }
-            .onChange(of: selectedPhoto) { _, _ in
-                hasPhoto = true
+            .onChange(of: selectedPhoto) { _, newItem in
+                Task {
+                    guard let data = try? await newItem?.loadTransferable(type: Data.self) else { return }
+                    photoData = data
+                    hasPhoto = true
+                }
             }
 
             // Note input
@@ -78,6 +86,7 @@ struct EditFrameSheet: View {
             HStack(spacing: 12) {
                 Button("删除照片", role: .destructive) {
                     hasPhoto = false
+                    photoData = nil
                     selectedPhoto = nil
                 }
                 .buttonStyle(.bordered)
@@ -95,20 +104,33 @@ struct EditFrameSheet: View {
         .task {
             note = frame.note ?? ""
             hasPhoto = frame.isFilled
+            // Load existing photo data for preview
+            if hasPhoto, let path = frame.photoPath {
+                photoData = try? Data(contentsOf: PhotoManager.documentsDir
+                    .deletingLastPathComponent()
+                    .appendingPathComponent(path))
+            }
         }
     }
 
     private func saveFrame() {
         frame.note = note.isEmpty ? nil : note
-        if hasPhoto {
-            // In a real app, save the selected photo via PhotoManager
-            frame.photoPath = "placeholder_path"
+
+        if hasPhoto, let data = photoData {
+            // Save photo to disk
+            let fileURL = PhotoManager.documentsDir
+                .appendingPathComponent("\(frame.date.timeIntervalSince1970).jpg")
+            try? FileManager.default.createDirectory(at: PhotoManager.documentsDir, withIntermediateDirectories: true)
+            try? data.write(to: fileURL)
+            frame.photoPath = "frames/\(frame.date.timeIntervalSince1970).jpg"
         } else {
-            frame.photoPath = nil
+            // Delete existing photo
             if let path = frame.photoPath {
                 PhotoManager.deletePhoto(at: path)
             }
+            frame.photoPath = nil
         }
+
         dismiss()
     }
 }
