@@ -75,13 +75,6 @@ struct RingView: View {
         } message: {
             Text("年轮图片已保存到相册")
         }
-        .onAppear {
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithTransparentBackground()
-            appearance.backgroundColor = .clear
-            UINavigationBar.appearance().standardAppearance = appearance
-            UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        }
     }
 
     private func exportRing(roll: FilmRoll) {
