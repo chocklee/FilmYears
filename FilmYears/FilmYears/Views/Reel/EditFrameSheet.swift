@@ -88,6 +88,7 @@ struct EditFrameSheet: View {
                     .textFieldStyle(.plain)
                     .font(.system(size: 16))
                     .foregroundColor(Color.textPrimary)
+                    .tint(Color(hex: "#6B7280"))
                     .padding(16)
                     .frame(height: 100, alignment: .top)
                     .background(Color.bgPrimary)
