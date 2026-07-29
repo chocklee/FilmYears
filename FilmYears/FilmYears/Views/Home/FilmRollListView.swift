@@ -60,7 +60,7 @@ private struct RollRowView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(roll.yearFormatted)
                     .font(.system(size: 30, weight: .regular))
-                    .foregroundColor(Color(hex: "#F4BD61"))
+                    .foregroundColor(.textPrimary)
 
                 Text(roll.frameCountFormatted)
                     .font(.system(size: 11, weight: .semibold))

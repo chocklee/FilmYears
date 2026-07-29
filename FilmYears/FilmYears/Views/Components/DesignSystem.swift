@@ -18,7 +18,7 @@ extension Color {
     static let accentGoldGlow = Color(hex: "#c8963e55") // 强调色(辉光)
 
     // MARK: Text
-    static let textPrimary = Color(hex: "#f0ece4")      // 主文字(暖白)
+    static let textPrimary = Color(hex: "#F4BD61")      // 主文字(暖金)
     static let textSecondary = Color(hex: "#a09a92")    // 次要文字
     static let textTertiary = Color(hex: "#6b6660")     // 辅助文字
 
