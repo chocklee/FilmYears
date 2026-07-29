@@ -49,30 +49,19 @@ private struct RollRowView: View {
     let roll: FilmRoll
 
     var body: some View {
-        HStack(spacing: Spacing.lg) {
-            // Film strip icon
+        HStack(spacing: 16) {
+            // Film strip image
             ZStack {
-                RoundedRectangle(cornerRadius: Radius.sm)
-                    .fill(Color.bgCard)
-                    .frame(width: 52, height: 52)
-
-                VStack(spacing: 4) {
-                    ForEach(0 ..< 3) { _ in
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(Color.accentGold.opacity(0.25))
-                                .frame(width: 4, height: 4)
-                            Circle()
-                                .fill(Color.accentGold.opacity(0.25))
-                                .frame(width: 4, height: 4)
-                        }
-                    }
-                }
+                Image("FilmStripIcon")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 72)
 
                 Text("\(roll.filledCount)")
                     .font(AppFont.caption.weight(.bold))
                     .foregroundColor(.textSecondary)
             }
+            .frame(width: 32)
 
             // Year info
             VStack(alignment: .leading, spacing: 2) {
