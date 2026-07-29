@@ -78,6 +78,7 @@ struct RingView: View {
                 ContentUnavailableView("暂无数据", systemImage: "circle.dotted")
             }
         }
+        }
         .frame(maxWidth: .infinity)
         .background(Color.bgPrimary)
         .toolbarBackground(.hidden, for: .navigationBar)
