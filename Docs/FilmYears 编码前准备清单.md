@@ -27,8 +27,8 @@
 
 ### 2.1 Xcode 项目初始化
 - [ ] 选择模板：iOS → App → SwiftUI + SwiftData
-- [ ] **Organization Identifier**：`com.yourcompany`（最终需匹配 App Store 上线 Bundle ID）
-- [ ] **Bundle Identifier**：`com.yourcompany.filmyears`
+- [ ] **Organization Identifier**：`com.chocklee`（最终需匹配 App Store 上线 Bundle ID）
+- [ ] **Bundle Identifier**：`com.chocklee.filmyears`
 - [ ] **Interface**：SwiftUI
 - [ ] **Language**：Swift
 - [ ] **Minimum Deployment**：iOS 18.0
@@ -76,13 +76,13 @@ FilmYears/
 
 ### 3.1 App Groups（Widget 数据共享）
 - [ ] 添加 Capability：App Groups
-- [ ] Group ID：`group.com.yourcompany.filmyears`
+- [ ] Group ID：`group.com.chocklee.filmyears`
 - [ ] **主 Target** + **Widget Extension Target** 都勾选同一个 Group
 
 ### 3.2 iCloud / CloudKit
 - [ ] 添加 Capability：iCloud
 - [ ] 勾选 **CloudKit** service
-- [ ] Container ID：`iCloud.com.yourcompany.filmyears`
+- [ ] Container ID：`iCloud.com.chocklee.filmyears`
 - [ ] 勾选 **Background Modes** → `Remote notifications`（CloudKit 推送同步需要）
 
 ### 3.3 Photo Library（用于导出年轮图片）
@@ -102,7 +102,7 @@ FilmYears/
   - 平台：iOS
   - 名称：FilmYears
   - 语言：简体中文（主要）/ 英文
-  - Bundle ID：`com.yourcompany.filmyears`
+  - Bundle ID：`com.chocklee.filmyears`
   - SKU：`FILMYEARS_001`
 - [ ] **注意**：Bundle ID 需先在 Apple Developer Portal 注册
 
@@ -115,7 +115,7 @@ FilmYears/
 - [ ] App Store Connect → App → Features → In-App Purchases
 - [ ] 创建一次性买断产品：
   - Reference Name：FilmYears Unlock
-  - Product ID：`com.yourcompany.filmyears.unlock`
+  - Product ID：`com.chocklee.filmyears.unlock`
   - Type：Non-Consumable
   - Price：$8.99 USD（其他地区自动换算）
   - 本地化名称/描述：中英文
@@ -210,7 +210,7 @@ feature/rv-* ─── 卷轴功能分支
 - [ ] Xcode → File → New → Target → **Widget Extension**
   - Product Name：`FilmYearsWidgets`
   - Language：Swift
-  - **Bundle Identifier**：`com.yourcompany.filmyears.widgets`
+  - **Bundle Identifier**：`com.chocklee.filmyears.widgets`
 - [ ] 确保 Widget Target 的 Minimum Deployment 也是 **iOS 18.0**
 - [ ] 确保 Widget Target 勾选相同的 **App Group**
 - [ ] 确认 Widget Target 的 Info.plist 不包含不必要的 Capabilities

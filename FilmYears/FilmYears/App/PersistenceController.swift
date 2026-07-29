@@ -28,15 +28,18 @@ struct PersistenceController {
         } else {
             config = ModelConfiguration(
                 schema: schema,
-                groupContainer: .identifier("group.com.yourcompany.filmyears"),
-                cloudKitDatabase: .private("iCloud.com.yourcompany.filmyears")
+                cloudKitDatabase: .private("iCloud.com.chocklee.filmyears")
             )
         }
 
         do {
             container = try ModelContainer(for: schema, configurations: [config])
         } catch {
-            fatalError("Failed to create ModelContainer: \(error.localizedDescription)")
+            // CloudKit container not available (e.g. first run, no iCloud account).
+            // Fall back to local-only container.
+            let fallback = ModelConfiguration(schema: schema)
+            container = (try? ModelContainer(for: schema, configurations: [fallback]))
+                ?? (try! ModelContainer())
         }
     }
 

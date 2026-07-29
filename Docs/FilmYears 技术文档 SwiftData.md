@@ -209,7 +209,7 @@ struct PersistenceController {
         } else {
             config = ModelConfiguration(
                 schema: schema,
-                cloudKitContainerIdentifier: "iCloud.com.yourcompany.filmyears"
+                cloudKitContainerIdentifier: "iCloud.com.chocklee.filmyears"
             )
         }
         
@@ -955,7 +955,7 @@ struct DensityBar: View {
 ```xml
 <!-- iCloud 容器 -->
 com.apple.developer.icloud-container-identifiers:
-  - iCloud.com.yourcompany.filmyears
+  - iCloud.com.chocklee.filmyears
 
 <!-- CloudKit 服务 -->
 com.apple.developer.icloud-services:
@@ -963,7 +963,7 @@ com.apple.developer.icloud-services:
 
 <!-- App Groups（Widget 共享数据） -->
 com.apple.security.application-groups:
-  - group.com.yourcompany.filmyears
+  - group.com.chocklee.filmyears
 ```
 
 ### SwiftData + WidgetKit 共享容器
@@ -975,7 +975,7 @@ com.apple.security.application-groups:
 let config = ModelConfiguration(
     schema: schema,
     url: FileManager.default
-        .containerURL(forSecurityApplicationGroupIdentifier: "group.com.yourcompany.filmyears")!
+        .containerURL(forSecurityApplicationGroupIdentifier: "group.com.chocklee.filmyears")!
         .appendingPathComponent("FilmYears.data")
 )
 ```
@@ -996,7 +996,7 @@ final class PurchaseManager {
     private(set) var isUnlocked: Bool = false
     private var updates: Task<Void, Never>?
     
-    private let productID = "com.yourcompany.filmyears.unlock"
+    private let productID = "chocklee.filmyears.unlock"
     
     init() {
         updates = observeTransactionUpdates()
